@@ -17,9 +17,25 @@ jobs:
     - name: Install dependencies
       run: |
             sudo apt-get update -y \
+            
+            # sudo apt-get install texlive-full -y
 
-            # Install the full version 
-            sudo apt-get install texlive-full -y
+            # should be quicker
+            sudo apt-get install -y \
+                texlive-latex-base \
+                texlive-latex-extra \
+                texlive-fonts-recommended \
+                texlive-fonts-extra \
+                texlive-lang-european \
+                texlive-science \
+                texlive-xetex \
+                texlive-pictures \
+                texlive-pstricks \
+                texlive-bibtex-extra \
+                texlive-luatex \
+                texlive-plain-generic \
+                lmodern
+
 
     - name: Generate pdfs 
       run: |
