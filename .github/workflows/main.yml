@@ -23,7 +23,6 @@ jobs:
 
     - name: Generate pdfs 
       run: |
-            cd /home/runner/work/hbv-403-3h/hbv-403-3h
             pdflatex UserStories.tex
 
     - name: Commit and push PDFs
