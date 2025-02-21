@@ -5,3 +5,5 @@
 *.out
 *syncTeX.gz
 *.synctex(busy)
+
+target/
