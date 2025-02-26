@@ -22,7 +22,7 @@ package hi.hbv401;
  * -- Selectors --
  * These are checkboxes or other types of selectors, 0 <= may be selected
  * propertyType: int[] (or enum[]?)
- * location: int[] (indexes into a hash map of locations we have elsewhere)
+ * location: int[] (indexes into a hash map/SQL database of locations we have elsewhere)
  */
 public class SearchParameters {
     
