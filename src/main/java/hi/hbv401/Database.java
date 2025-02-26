@@ -1,6 +1,6 @@
 package hi.hbv401;
 
-public class database {
+public class Database {
     // SQL interface code
 
     // Load SQL database
