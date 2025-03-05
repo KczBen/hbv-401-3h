@@ -1,9 +1,10 @@
 CREATE TABLE hotels(
-   hotel_id    INTEGER  NOT NULL PRIMARY KEY 
+   hotel_id    INTEGER  NOT NULL
   ,room_number INTEGER  NOT NULL
   ,type        VARCHAR(255) NOT NULL
   ,max_guests  INTEGER  NOT NULL
   ,amenities   VARCHAR(255) NOT NULL
+  ,PRIMARY KEY (hotel_id, room_number)
 );
 INSERT INTO hotels(hotel_id,room_number,type,max_guests,amenities) VALUES (1,101,'Studio Apartment',2,'Free WiFi, Coffee Maker, MiniFridge, Microwave');
 INSERT INTO hotels(hotel_id,room_number,type,max_guests,amenities) VALUES (1,102,'Studio Apartment',2,'Free WiFi, Coffee Maker, MiniFridge, Microwave');

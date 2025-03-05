@@ -15,7 +15,7 @@ public class Database {
     // Load SQL database
 
     /* Get a list of hotel IDs that match the requested parameters. Returns null if none exist */
-    public static List<Integer> searchHotels(SearchParameters params) {
+    public List<Integer> searchHotels(SearchParameters params) {
         // Join hotel and room tables on hotelID
 
         // Search by the parameters
@@ -26,7 +26,7 @@ public class Database {
     }
 
     /* Get details about a hotel */
-    public static Hotel getHotelDetails(int hotelID) {
+    public Hotel getHotelDetails(int hotelID) {
 
         
 
