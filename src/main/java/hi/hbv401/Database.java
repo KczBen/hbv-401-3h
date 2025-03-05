@@ -27,8 +27,20 @@ public class Database {
 
     /* Get details about a hotel */
     public Hotel getHotelDetails(int hotelID) {
+        // Join the hotel and room tables on hotelID
 
+        // Make a list of the rooms
+
+        // Create a new Hotel and return it
         
+        return null;
+    }
+
+    /* Gets the booked dates for the given room. It returns a list of from..to dates if the hotel is booked, null otherwise */
+    public List<Availability> getRoomAvailabilities(int hotelID, int roomNumber) {
+        // Select the given (hotelID, roomNumber) key from the reservations table
+
+        // Make a list of Availability from the dates in the table and return it
 
         return null;
     }
