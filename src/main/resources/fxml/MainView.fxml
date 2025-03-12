@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="hi.hbv401.ui.MainViewController"
+            stylesheets="@style.css">
+
+    <!-- Top Section - Header -->
+    <top>
+        <HBox style="-fx-background-color: #2a2a2a; -fx-padding: 20px;" alignment="CENTER">
+            <Label text="Luxury Stays" style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <!-- Center Section - Booking Form -->
+    <center>
+        <VBox spacing="20" alignment="CENTER" style="-fx-padding: 40px;">
+            <Text text="Book Your Perfect Stay" style="-fx-font-size: 24px; -fx-fill: #2a2a2a;"/>
+
+            <GridPane hgap="20" vgap="15" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints prefWidth="200"/>
+                    <ColumnConstraints prefWidth="200"/>
+                </columnConstraints>
+
+                <!-- Row 1: Location Input -->
+                <Label text="Destination:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="locationField" promptText="Enter city or hotel name" GridPane.rowIndex="0"
+                           GridPane.columnIndex="1"/>
+
+                <!-- Row 2: Date Pickers -->
+                <Label text="Check-in Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="checkInDate" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Check-out Date:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="checkOutDate" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <!-- Row 3: Guests and Rooms -->
+                <Label text="Guests:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Spinner fx:id="guestsSpinner" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <valueFactory>
+                        <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="8" initialValue="1"/>
+                    </valueFactory>
+                </Spinner>
+
+                <Label text="Room Type:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="roomTypeCombo" GridPane.rowIndex="4" GridPane.columnIndex="1">
+
+                </ComboBox>
+            </GridPane>
+
+            <Button text="Search Availability"
+                    style="-fx-font-size: 16px; -fx-background-color: #007bff; -fx-text-fill: white;"
+                    onAction="#handleSearch"/>
+                    
+            <TableView fx:id="hotelTableView" VBox.vgrow="ALWAYS">
+                <!-- We'll configure columns in the controller -->
+            </TableView>
+        </VBox>
+    </center>
+
+    <!-- Bottom Section - Footer -->
+    <bottom>
+        <HBox style="-fx-background-color: #f8f9fa; -fx-padding: 15px;" alignment="CENTER">
+            <Label text="Contact us: info@luxurystays.com | Tel: (555) 123-4567"
+                   style="-fx-text-fill: #6c757d;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
