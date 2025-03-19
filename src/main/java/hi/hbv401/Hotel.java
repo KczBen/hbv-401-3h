@@ -2,44 +2,51 @@ package hi.hbv401;
 
 import java.util.*;
 
-/* More detailed stuff about the hotels once the user clicks on it */
 public class Hotel {
-    public final int hotelID;
-    public final String name;
-    public final float rating;
-    public final String description;
-    public final List<String> photos;
-    public final int startingPrice;
-    public final List<Room> rooms;
-    public final String cancelPolicy;
-    public final String phone;
-    public final String email;
-    public final String address;
-    
-    // oBjEcT oRiEnTeD pRoGrAmMiNg Is So GoOd
-    public Hotel(int hotelID,
-                        String name,
-                        float rating,
-                        String longDescription,
-                        List<String> photos,
-                        int price,
-                        List<Room> rooms,
-                        int propertyType,
-                        String cancelPolicy,
-                        String phone,
-                        String email,
-                        String address) {
+    private final int hotelId;
+    private final String name;
+    private final float rating;
+    private final String description;
+    private final List<String> photos;
+    private final int startingPrice;
+    private final List<Room> rooms;
+    private final String cancelPolicy;
+    private final String phone;
+    private final String email;
+    private final String address;
 
-        this.hotelID = hotelID;
+    public Hotel(int hotelId, String name, float rating, String description, List<String> photos, int startingPrice,
+            List<Room> rooms, String cancelPolicy, String phone, String email, String address) {
+        this.hotelId = hotelId;
         this.name = name;
         this.rating = rating;
-        this.description = longDescription;
-        this.photos = photos;
-        this.startingPrice = price;
+        this.description = description;
+        this.photos = (photos != null) ? photos : List.of();
+        this.startingPrice = startingPrice;
         this.rooms = rooms;
         this.cancelPolicy = cancelPolicy;
         this.phone = phone;
         this.email = email;
         this.address = address;
+    }
+
+    public int getHotelId() {
+        return hotelId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<String> getPhotos() {
+        return photos;
     }
 }

@@ -15,22 +15,26 @@ public class User {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.reservations = (reservations != null) ? reservations : new ArrayList<>();
+        this.reservations = (reservations != null) ? new ArrayList<>(reservations) : new ArrayList<>();
     }
 
-    public int getUserId() { return userId; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPhone() { return phone; }
-    public List<Booking> getReservations() { return new ArrayList<>(reservations); }
-
-    public void addBooking(Booking booking) {
-        if (booking != null) {
-            reservations.add(booking);
-        }
+    public int getUserId() {
+        return userId;
     }
 
-    public void cancelBooking(Booking booking) {
-        reservations.remove(booking);
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public List<Booking> getReservations() {
+        return new ArrayList<>(reservations);
     }
 }
