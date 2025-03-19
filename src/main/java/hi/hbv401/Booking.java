@@ -1,21 +1,39 @@
 package hi.hbv401;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Booking {
-    // TODO: Replace with LocalDate, we do not need time
-    public final LocalDateTime bookedFrom;
-    public final LocalDateTime bookedUntil;
-    // in place of a user ID
-    public final String userEmail;
-    public final int hotelId;
-    public final int roomNumber;
+    private final LocalDate bookedFrom;
+    private final LocalDate bookedUntil;
+    private final User user;
+    private final int hotelId;
+    private final int roomNumber;
 
-    public Booking(LocalDateTime bookedFrom, LocalDateTime bookedUntil, String userEmail, int hotelId, int roomNumber) {
+    public Booking(LocalDate bookedFrom, LocalDate bookedUntil, User user, int hotelId, int roomNumber) {
         this.bookedFrom = bookedFrom;
         this.bookedUntil = bookedUntil;
-        this.userEmail = userEmail;
+        this.user = user;
         this.hotelId = hotelId;
         this.roomNumber = roomNumber;
+    }
+
+    public LocalDate getBookedFrom() {
+        return bookedFrom;
+    }
+
+    public LocalDate getBookedUntil() {
+        return bookedUntil;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public int getHotelId() {
+        return hotelId;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 }
