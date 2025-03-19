@@ -14,6 +14,7 @@ public class SearchParameters {
     public final Integer guestsMin;
     public final Integer guestsMax;
 
+    // TODO: Replace with LocalDate, we do not need time
     public final LocalDateTime availableFrom;
     public final LocalDateTime availableUntil;
 

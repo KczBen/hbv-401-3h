@@ -3,6 +3,7 @@ package hi.hbv401;
 import java.time.LocalDateTime;
 
 public class Booking {
+    // TODO: Replace with LocalDate, we do not need time
     public final LocalDateTime bookedFrom;
     public final LocalDateTime bookedUntil;
     // in place of a user ID

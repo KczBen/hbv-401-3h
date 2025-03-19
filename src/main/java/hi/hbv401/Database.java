@@ -2,8 +2,10 @@ package hi.hbv401;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Database {
@@ -202,10 +204,49 @@ public class Database {
     /* Gets the booked dates for the given room. It returns a list of from..to dates if the hotel is booked, null otherwise */
     public List<Booking> getRoomBookings(int hotelId, int roomNumber) {
         // Select the given (hotel_id, roomNumber) key from the reservations table
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(hotelsUrl);
+            Statement stmt = conn.createStatement();
+            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
 
-        // Make a list of Availability from the dates in the table and return it
+            String sql = """
+                SELECT * FROM
+                    availability AS b
+                    WHERE
+                        b.hotel_id = ?
+                        AND
+                        b.room_number = ?
+                """;
 
-        return null;
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, hotelId);
+            pstmt.setInt(2, roomNumber);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            // Make a list of Availability from the dates in the table and return it
+            List<Booking> bookingList = new ArrayList<>(); 
+
+            while (rs.next()) {
+                LocalDateTime bookedFrom = LocalDate.parse(rs.getString("booked_from")).atStartOfDay();
+                LocalDateTime bookedUntil = LocalDate.parse(rs.getString("booked_from")).atStartOfDay();
+                // TODO: String userEmail = rs.getString("email"); <- Not in data yet
+                // java plz shadow it?
+                int dbhotelId = rs.getInt("hotel_id");
+                int dbroomNumber = rs.getInt("room_number");
+
+                bookingList.add(new Booking(bookedFrom, bookedUntil, null, dbhotelId, dbroomNumber));
+            }
+
+            return bookingList;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
     }
 
     public List<Booking> getBookingForUser(String userEmail) {
