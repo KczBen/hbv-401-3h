@@ -6,11 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="72267759-8dac-4f92-aa4a-ca2c14950385" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/ui/MainViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hi/hbv401/ui/MainViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UML/UserStories.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/UML/UserStories.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/ui/placeholder.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/MainView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/MainView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/ui/HotelBookingApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/ui/HotelBookingApp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/ui/MainViewController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/ui/MainViewController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fxml/MainView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fxml/MainView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/Database.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/Database.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/SearchParameters.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/SearchParameters.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,18 +58,18 @@
     <option name="showModules" value="false" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "jdk.selected.JAVA_MODULE": "temurin-21",
-    "last_opened_file_path": "C:/Users/benja/OneDrive/Desktop/throbohop/hbv-401-3h",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "Template Data Languages"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;temurin-21&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/benja/OneDrive/Desktop/throbohop/hbv-401-3h&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Template Data Languages&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\benja\OneDrive\Desktop\throbohop\hbv-401-3h\csv" />
@@ -97,4 +99,14 @@
     </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IllegalArgumentException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
 </project>
