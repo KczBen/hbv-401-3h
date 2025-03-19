@@ -1,35 +1,36 @@
 package hi.hbv401;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /* Arguments to the search function in the database */
 public class SearchParameters {
-    public final int priceMin;
-    public final int priceMax;
+    public final Integer priceMin;
+    public final Integer priceMax;
     
-    public final int ratingMin;
-    public final int ratingMax;
+    public final Integer ratingMin;
+    public final Integer ratingMax;
 
-    public final int guestsMin;
-    public final int guestsMax;
+    public final Integer guestsMin;
+    public final Integer guestsMax;
 
-    public final Date availableFrom;
-    public final Date availableUntil;
+    // TODO: Replace with LocalDate, we do not need time
+    public final LocalDateTime availableFrom;
+    public final LocalDateTime availableUntil;
 
     public final List<Integer> propertyTypes;
-    public final int location;
+    public final Integer location;
 
-    public SearchParameters(int priceMin, 
-                            int priceMax, 
-                            int ratingMin, 
-                            int ratingMax, 
-                            int guestsMin, 
-                            int guestsMax, 
-                            Date availableFrom, 
-                            Date availableUntil, 
+    public SearchParameters(Integer priceMin, 
+                            Integer priceMax, 
+                            Integer ratingMin, 
+                            Integer ratingMax, 
+                            Integer guestsMin, 
+                            Integer guestsMax, 
+                            LocalDateTime availableFrom, 
+                            LocalDateTime availableUntil, 
                             List<Integer> propertyTypes,
-                            int location) {
+                            Integer location) {
 
         this.priceMin = priceMin;
         this.priceMax = priceMax;
