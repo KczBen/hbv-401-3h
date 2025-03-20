@@ -1,0 +1,22 @@
+/* Basic styling for the application */
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.button {
+    -fx-background-radius: 4px;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+}
+
+.table-view .column-header {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
