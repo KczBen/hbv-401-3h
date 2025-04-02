@@ -4,9 +4,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Database {
@@ -234,8 +232,8 @@ public class Database {
             List<Booking> bookingList = new ArrayList<>(); 
 
             while (rs.next()) {
-                LocalDateTime bookedFrom = LocalDate.parse(rs.getString("booked_from")).atStartOfDay();
-                LocalDateTime bookedUntil = LocalDate.parse(rs.getString("booked_from")).atStartOfDay();
+                LocalDate bookedFrom = LocalDate.parse(rs.getString("booked_from"));
+                LocalDate bookedUntil = LocalDate.parse(rs.getString("booked_from"));
                 // TODO: String userEmail = rs.getString("email"); <- Not in data yet
                 // java plz shadow it?
                 int dbhotelId = rs.getInt("hotel_id");
@@ -253,16 +251,83 @@ public class Database {
         }
     }
 
-    public List<Booking> getBookingForUser(String userEmail) {
+    public List<Booking> getBookingForUser(User user) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(hotelsUrl);
+            Statement stmt = conn.createStatement();
+            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
 
-        return null;
+            String sql = """
+                SELECT * FROM
+                    availability AS b
+                    WHERE
+                        b.user_id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, user.getUserId());
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            // Make a list of Availability from the dates in the table and return it
+            List<Booking> bookingList = new ArrayList<>(); 
+
+            while (rs.next()) {
+                LocalDate bookedFrom = LocalDate.parse(rs.getString("booked_from"));
+                LocalDate bookedUntil = LocalDate.parse(rs.getString("booked_from"));
+                int dbhotelId = rs.getInt("hotel_id");
+                int dbroomNumber = rs.getInt("room_number");
+
+                bookingList.add(new Booking(bookedFrom, bookedUntil, user, dbhotelId, dbroomNumber));
+            }
+
+            return bookingList;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
     }
 
     public void makeBooking(String userEmail, Room room) {
 
     }
 
-    public void cancelBooking(String userEmail, int hotelId, int roomNumber) {
+    public void cancelBooking(User user, int hotelId, int roomNumber) {
+        // Apparently we have users now
+        // Just remove the entry from the reservatoins where user_id, hotel_id and room_number match
 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(hotelsUrl);
+            Statement stmt = conn.createStatement();
+            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
+
+            String sql = """
+                DELETE FROM
+                    availability AS b
+                    WHERE
+                        b.hotel_id = ?
+                        AND
+                        b.room_number = ?
+                        AND
+                        b.user_id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, hotelId);
+            pstmt.setInt(2, roomNumber);
+            pstmt.setInt(3, user.getUserId());
+
+            pstmt.executeQuery();
+        }
+
+        catch(Exception e) {
+            System.err.println("Failed to delete booking");
+        }
     }
 }
