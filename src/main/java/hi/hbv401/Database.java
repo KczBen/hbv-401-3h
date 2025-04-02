@@ -3,8 +3,8 @@ package hi.hbv401;
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -129,6 +129,7 @@ public class Database {
 
     /* Get details about a hotel */
     public Hotel getHotelDetails(int hotel_id) {
+        List<Integer> priceList = new ArrayList<Integer>();
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(hotelsUrl);
@@ -157,6 +158,9 @@ public class Database {
                 Integer maxGuests = rs.getInt("max_guests");
                 Integer price = rs.getInt("price");
 
+                // Add price to the array so we can get the min price later
+                priceList.add(price);
+
                 roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests));
             }
 
@@ -175,8 +179,7 @@ public class Database {
             float rating = 0;
             String longDescription = "";
             List<String> photos = new ArrayList<>();
-            int price = 0;
-            int propertyType = 0;
+            int startingPrice = Collections.min(priceList);
             String cancelPolicy = "";
             String phone = "";
             String email = "";
@@ -187,14 +190,14 @@ public class Database {
                 name = rs.getString("name");
                 rating = rs.getInt("rating");
                 longDescription = rs.getString("description");
+                photos.add(rs.getString("photoUrl"));
+                address = rs.getString("location");
                 cancelPolicy = rs.getString("cancellation_policy");
                 phone = rs.getString("phone");
                 email = rs.getString("email");
-                // TODO: Min price, photos, address
-                // TODO: Remove property type from hotel, it's a room property
             }
 
-            return new Hotel(hotelId, name, rating, longDescription, photos, price, roomsList, propertyType, cancelPolicy, phone, email, address);
+            return new Hotel(hotelId, name, rating, longDescription, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
         }
 
         catch (Exception e) {
