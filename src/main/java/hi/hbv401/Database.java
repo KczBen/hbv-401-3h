@@ -12,12 +12,12 @@ public class Database {
 
     private final String hotelsUrl;
     private final String roomsUrl;
-    private final String availabilityUrl;
+    private final String bookingsUrl;
 
-    public Database(String hotelsUrl, String roomsUrl, String availabilityUrl) {
+    public Database(String hotelsUrl, String roomsUrl, String bookingsUrl) {
         this.hotelsUrl = "jdbc:sqlite:" + hotelsUrl;
         this.roomsUrl = roomsUrl;
-        this.availabilityUrl = availabilityUrl;
+        this.bookingsUrl = bookingsUrl;
     }
 
     // Load SQL database
@@ -29,7 +29,7 @@ public class Database {
             Connection conn = DriverManager.getConnection(hotelsUrl);
             Statement stmt = conn.createStatement();
             stmt.execute("ATTACH DATABASE '" + roomsUrl + "' AS rooms");
-            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
+            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
 
             /* Dnamically build the query, since nothing is expected to be specified */
             // base statement, joins rooms and catches all by default
@@ -78,7 +78,7 @@ public class Database {
             {
                 sql.append("""
                     AND NOT EXISTS ( 
-                        SELECT 1 FROM bookings.availability AS b
+                        SELECT 1 FROM bookings AS b
                             WHERE b.hotel_id = r.hotel_id
                                 AND b.room_number = r.room_number
                     """);
@@ -210,11 +210,11 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(hotelsUrl);
             Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
+            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
 
             String sql = """
                 SELECT * FROM
-                    availability AS b
+                    bookings AS b
                     WHERE
                         b.hotel_id = ?
                         AND
@@ -228,7 +228,7 @@ public class Database {
 
             ResultSet rs = pstmt.executeQuery();
             
-            // Make a list of Availability from the dates in the table and return it
+            // Make a list of bookings from the dates in the table and return it
             List<Booking> bookingList = new ArrayList<>(); 
 
             while (rs.next()) {
@@ -256,11 +256,11 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(hotelsUrl);
             Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
+            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
 
             String sql = """
                 SELECT * FROM
-                    availability AS b
+                    bookings AS b
                     WHERE
                         b.user_id = ?
                 """;
@@ -271,7 +271,7 @@ public class Database {
 
             ResultSet rs = pstmt.executeQuery();
             
-            // Make a list of Availability from the dates in the table and return it
+            // Make a list of bookings from the dates in the table and return it
             List<Booking> bookingList = new ArrayList<>(); 
 
             while (rs.next()) {
@@ -304,11 +304,11 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(hotelsUrl);
             Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + availabilityUrl + "' AS bookings");
+            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
 
             String sql = """
                 DELETE FROM
-                    availability AS b
+                    bookings AS b
                     WHERE
                         b.hotel_id = ?
                         AND
