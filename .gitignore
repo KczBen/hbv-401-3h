@@ -6,5 +6,7 @@
 *syncTeX.gz
 *.synctex(busy)
 
+target/
+.vscode/
 target/*
 .vscode/*
