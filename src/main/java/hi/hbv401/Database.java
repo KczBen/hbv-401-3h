@@ -391,8 +391,30 @@ public class Database {
         return getBookingForUser(user.getUserId());
     }
 
-    public void makeBooking(User user, Room room) {
-        throw new IllegalAccessError("Not implemented yet");
+    public void makeBooking(Booking booking) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                INSERT INTO bookings (hotel_id, room_number, booked_from, booked_until, user_id)
+                    VALUES (?, ?, ?, ?, ?)
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, booking.getHotelId());
+            pstmt.setInt(2, booking.getRoomNumber());
+            pstmt.setDate(3, java.sql.Date.valueOf(booking.getBookedFrom()));
+            pstmt.setDate(4, java.sql.Date.valueOf(booking.getBookedUntil()));
+            pstmt.setInt(5, booking.getUser());
+
+            pstmt.executeUpdate();
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     public void cancelBooking(User user, int hotelId, int roomNumber) {
@@ -468,7 +490,27 @@ public class Database {
     }
 
     public void createUser(User user) {
-        throw new IllegalStateException("Not implemented yet");
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                INSERT INTO users (name, email, phone)
+                VALUES (?, ?, ?)
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, user.getPhone());
+
+            pstmt.executeUpdate();
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     /* Reviews */
@@ -558,5 +600,31 @@ public class Database {
 
     public List<Review> getUserReviews(User user) {
         return getUserReviews(user.getUserId());
+    }
+
+    public void createReview(Review review) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                INSERT INTO reviews (user_id, hotel_id, rating, content, date)
+                VALUES (?, ?, ?, ?, ?)
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, review.getUser().getUserId());
+            pstmt.setInt(2, review.getHotel().getHotelId());
+            pstmt.setInt(3, review.getRating());
+            pstmt.setString(4, review.getComment());
+            pstmt.setDate(5, java.sql.Date.valueOf(review.getCreatedAt()));
+
+            pstmt.executeUpdate();
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+        }
     }
 }

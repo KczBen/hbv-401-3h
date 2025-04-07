@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    private final int userId;
+    private final Integer userId;
     private final String name;
     private final String email;
     private final String phone;
     private final List<Booking> reservations;
 
-    public User(int userId, String name, String email, String phone, List<Booking> reservations) {
+    public User(Integer userId, String name, String email, String phone, List<Booking> reservations) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -40,7 +40,7 @@ public class User {
         return sb.toString();
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
