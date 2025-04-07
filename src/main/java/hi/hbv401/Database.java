@@ -2,41 +2,52 @@ package hi.hbv401;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Database {
-    // SQL interface code
+    private static Database instance;
 
-    private final String hotelsUrl;
-    private final String roomsUrl;
-    private final String bookingsUrl;
+    private final String dbUrl;
 
-    public Database(String hotelsUrl, String roomsUrl, String bookingsUrl) {
-        this.hotelsUrl = "jdbc:sqlite:" + hotelsUrl;
-        this.roomsUrl = roomsUrl;
-        this.bookingsUrl = bookingsUrl;
+    private Database(String dbUrl) {
+        this.dbUrl = "jdbc:sqlite:" + dbUrl;
     }
 
-    // Load SQL database
+    public static void initialize(String dbUrl) {
+        if (instance == null) {
+            instance = new Database(dbUrl);
+        } else {
+            throw new IllegalStateException("Database already initialized");
+        }
+    }
 
-    /* Get a list of hotel IDs that match the requested parameters. Returns null if none exist */
-    public List<Integer> searchHotels(SearchParameters params) {
+    public static Database getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Database not initialized yet");
+        }
+        return instance;
+    }
+
+    /* Hotels - Search */
+    public List<Hotel> searchHotels(SearchParameters params) {
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(hotelsUrl);
-            Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + roomsUrl + "' AS rooms");
-            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
+            Connection conn = DriverManager.getConnection(dbUrl);
 
-            /* Dnamically build the query, since nothing is expected to be specified */
+            /* Dynamically build the query, since nothing is expected to be specified */
             // base statement, joins rooms and catches all by default
             StringBuilder sql = new StringBuilder("""
-                SELECT h.hotel_id 
+                SELECT h.hotel_id,r.room_number
                 FROM hotels AS h
-                    LEFT JOIN rooms.rooms AS r ON h.hotel_id = r.hotel_id
+                    LEFT JOIN rooms AS r ON h.hotel_id = r.hotel_id
 
                     WHERE 1=1 
                 """);
@@ -72,8 +83,7 @@ public class Database {
                 sqlParams.add(params.guestsMax);
             }
 
-            // now here is where it gets fucky-wucky with the availability
-            // we need to return a period where there is no overlap between the specified date and booked dates
+            // availability
             if (params.availableFrom != null || params.availableUntil != null)
             {
                 sql.append("""
@@ -96,27 +106,37 @@ public class Database {
                     sqlParams.add(params.availableUntil.format(DateTimeFormatter.ISO_DATE));
                 }
             }
-
-            sql.append("GROUP BY h.hotel_id");
             
             PreparedStatement pstmt = conn.prepareStatement(sql.toString());
             
             for (int i = 0; i < sqlParams.size(); i++) {
                 pstmt.setObject(i + 1, sqlParams.get(i));
             }
-            
-            // Debug: show the query template + args
-            System.out.println(pstmt);
-            
+                        
             ResultSet rs = pstmt.executeQuery();
 
-            List<Integer> hotelIdList = new ArrayList<Integer>();
+            Map<Integer, Set<Integer>> hotelIdToRoomNumbers = new HashMap<>();
 
             while (rs.next()) {
-                hotelIdList.add(rs.getInt("hotel_id"));
+                int hotelId = rs.getInt("hotel_id");
+                int roomNumber = rs.getInt("room_number");
+
+                hotelIdToRoomNumbers
+                    .computeIfAbsent(hotelId, k -> new HashSet<>())
+                    .add(roomNumber);
             }
 
-            return hotelIdList;
+            List<Hotel> hotelList = new ArrayList<>();
+
+            for (Map.Entry<Integer, Set<Integer>> entry : hotelIdToRoomNumbers.entrySet()) {
+                int hotelId = entry.getKey();
+                List<Integer> roomNumbers = new ArrayList<>(entry.getValue());
+
+                Hotel hotel = getHotelDetailsFiltered(hotelId, roomNumbers);
+                hotelList.add(hotel);
+            }
+
+            return hotelList;
         }
         
         catch (Exception e) {
@@ -125,14 +145,11 @@ public class Database {
         }
     }
 
-    /* Get details about a hotel */
     public Hotel getHotelDetails(int hotel_id) {
         List<Integer> priceList = new ArrayList<Integer>();
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(hotelsUrl);
-            Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + roomsUrl + "' AS rooms");
+            Connection conn = DriverManager.getConnection(dbUrl);
 
             // get rooms first to make building the hotel easier
             String sql = """
@@ -175,7 +192,7 @@ public class Database {
             int hotelId = 0;
             String name = "";
             float rating = 0;
-            String longDescription = "";
+            String short_description = "";
             List<String> photos = new ArrayList<>();
             int startingPrice = Collections.min(priceList);
             String cancelPolicy = "";
@@ -187,30 +204,111 @@ public class Database {
                 hotelId = rs.getInt("hotel_id");
                 name = rs.getString("name");
                 rating = rs.getInt("rating");
-                longDescription = rs.getString("description");
-                photos.add(rs.getString("photoUrl"));
+                short_description = rs.getString("short_description");
+                photos.add(rs.getString("index_photo"));
                 address = rs.getString("location");
                 cancelPolicy = rs.getString("cancellation_policy");
                 phone = rs.getString("phone");
                 email = rs.getString("email");
             }
 
-            return new Hotel(hotelId, name, rating, longDescription, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
+            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
         }
 
         catch (Exception e) {
+            System.err.println(e);
             return null;
         }
     }
 
-    /* Gets the booked dates for the given room. It returns a list of from..to dates if the hotel is booked, null otherwise */
+    private Hotel getHotelDetailsFiltered(int hotel_id, List<Integer> includedRooms) {
+        List<Integer> priceList = new ArrayList<Integer>();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String placeholders = includedRooms.stream()
+                .map(rn -> "?")
+                .collect(Collectors.joining(", "));
+
+            String sql = """
+                SELECT *
+                    FROM rooms AS r
+                    WHERE r.hotel_id = ?
+                        AND r.room_number IN (""" + placeholders + ")";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, hotel_id);
+            for (int i = 0; i < includedRooms.size(); i++) {
+                pstmt.setInt(i + 2, includedRooms.get(i));
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<Room> roomsList = new ArrayList<>(); 
+
+            while (rs.next()) {
+                Integer hotelId = rs.getInt("hotel_id");
+                Integer roomNumber = rs.getInt("room_number");
+                String type = rs.getString("type");
+                Integer maxGuests = rs.getInt("max_guests");
+                Integer price = rs.getInt("price");
+
+                // Add price to the array so we can get the min price later
+                priceList.add(price);
+
+                roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests));
+            }
+
+            sql = """
+                SELECT *
+                    FROM hotels AS h
+                    WHERE h.hotel_id = ?
+                """;
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, hotel_id);
+            rs = pstmt.executeQuery();
+
+            int hotelId = 0;
+            String name = "";
+            float rating = 0;
+            String short_description = "";
+            List<String> photos = new ArrayList<>();
+            int startingPrice = Collections.min(priceList);
+            String cancelPolicy = "";
+            String phone = "";
+            String email = "";
+            String address = "";
+
+            while (rs.next()) {
+                hotelId = rs.getInt("hotel_id");
+                name = rs.getString("name");
+                rating = rs.getInt("rating");
+                short_description = rs.getString("short_description");
+                photos.add(rs.getString("index_photo"));
+                address = rs.getString("location");
+                cancelPolicy = rs.getString("cancellation_policy");
+                phone = rs.getString("phone");
+                email = rs.getString("email");
+            }
+
+            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    /* Bookings */
     public List<Booking> getRoomBookings(int hotelId, int roomNumber) {
         // Select the given (hotel_id, roomNumber) key from the reservations table
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(hotelsUrl);
-            Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
+            Connection conn = DriverManager.getConnection(dbUrl);
 
             String sql = """
                 SELECT * FROM
@@ -232,14 +330,52 @@ public class Database {
             List<Booking> bookingList = new ArrayList<>(); 
 
             while (rs.next()) {
+                int dbhotelId = rs.getInt("hotel_id");
+                int dbroomNumber = rs.getInt("room_number");
                 LocalDate bookedFrom = LocalDate.parse(rs.getString("booked_from"));
                 LocalDate bookedUntil = LocalDate.parse(rs.getString("booked_from"));
-                // TODO: String userEmail = rs.getString("email"); <- Not in data yet
-                // java plz shadow it?
+                int userId = rs.getInt("user_id");
+
+                bookingList.add(new Booking(bookedFrom, bookedUntil, userId, dbhotelId, dbroomNumber));
+            }
+
+            return bookingList;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<Booking> getBookingForUser(int userId) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    bookings AS b
+                    WHERE
+                        b.user_id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            // Make a list of bookings from the dates in the table and return it
+            List<Booking> bookingList = new ArrayList<>(); 
+
+            while (rs.next()) {
+                LocalDate bookedFrom = LocalDate.parse(rs.getString("booked_from"));
+                LocalDate bookedUntil = LocalDate.parse(rs.getString("booked_until"));
                 int dbhotelId = rs.getInt("hotel_id");
                 int dbroomNumber = rs.getInt("room_number");
 
-                bookingList.add(new Booking(bookedFrom, bookedUntil, null, dbhotelId, dbroomNumber));
+                bookingList.add(new Booking(bookedFrom, bookedUntil, userId, dbhotelId, dbroomNumber));
             }
 
             return bookingList;
@@ -252,59 +388,17 @@ public class Database {
     }
 
     public List<Booking> getBookingForUser(User user) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(hotelsUrl);
-            Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
-
-            String sql = """
-                SELECT * FROM
-                    bookings AS b
-                    WHERE
-                        b.user_id = ?
-                """;
-
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-
-            pstmt.setInt(1, user.getUserId());
-
-            ResultSet rs = pstmt.executeQuery();
-            
-            // Make a list of bookings from the dates in the table and return it
-            List<Booking> bookingList = new ArrayList<>(); 
-
-            while (rs.next()) {
-                LocalDate bookedFrom = LocalDate.parse(rs.getString("booked_from"));
-                LocalDate bookedUntil = LocalDate.parse(rs.getString("booked_from"));
-                int dbhotelId = rs.getInt("hotel_id");
-                int dbroomNumber = rs.getInt("room_number");
-
-                bookingList.add(new Booking(bookedFrom, bookedUntil, user, dbhotelId, dbroomNumber));
-            }
-
-            return bookingList;
-        }
-
-        catch (Exception e) {
-            System.err.println(e);
-            return null;
-        }
+        return getBookingForUser(user.getUserId());
     }
 
-    public void makeBooking(String userEmail, Room room) {
-
+    public void makeBooking(User user, Room room) {
+        throw new IllegalAccessError("Not implemented yet");
     }
 
     public void cancelBooking(User user, int hotelId, int roomNumber) {
-        // Apparently we have users now
-        // Just remove the entry from the reservatoins where user_id, hotel_id and room_number match
-
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(hotelsUrl);
-            Statement stmt = conn.createStatement();
-            stmt.execute("ATTACH DATABASE '" + bookingsUrl + "' AS bookings");
+            Connection conn = DriverManager.getConnection(dbUrl);
 
             String sql = """
                 DELETE FROM
@@ -329,5 +423,140 @@ public class Database {
         catch(Exception e) {
             System.err.println("Failed to delete booking");
         }
+    }
+
+    /* Users */
+    public User getUserDetails(int userId) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    users AS u
+                    WHERE
+                        u.id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            int id = 0;
+            String name = null;
+            String email = null;
+            String phone = null;
+            List<Booking> reservations = null;
+
+            while (rs.next()) {
+                id = rs.getInt("id");
+                name = rs.getString("name");
+                email = rs.getString("email");
+                phone = rs.getString("phone");
+                reservations = getBookingForUser(id);
+            }
+
+            return new User(id, name, email, phone, reservations);
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public void createUser(User user) {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+    /* Reviews */
+    public List<Review> getHotelReviews(int hotelId) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    reviews AS r
+                    WHERE
+                        r.hotel_id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, hotelId);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<Review> reviewList = new ArrayList<>();
+
+            Hotel hotel = getHotelDetails(hotelId);
+            
+            while (rs.next()) {
+                int rating = rs.getInt("rating");
+                String comment = rs.getString("content");
+                LocalDate createdAt = LocalDate.parse(rs.getString("date"));;
+                User user = getUserDetails(rs.getInt("user_id"));
+
+                reviewList.add(new Review(user, hotel, rating, comment, createdAt));
+            }
+
+            return reviewList;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<Review> getHotelReviews(Hotel hotel) {
+        return getHotelReviews(hotel.hotelId);
+    }
+
+    public List<Review> getUserReviews(int userId) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    reviews AS r
+                    WHERE
+                        r.user_id = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<Review> reviewList = new ArrayList<>();
+
+            Hotel hotel = getHotelDetails(userId);
+            
+            while (rs.next()) {
+                int rating = rs.getInt("rating");
+                String comment = rs.getString("content");
+                LocalDate createdAt = LocalDate.parse(rs.getString("date"));;
+                User user = getUserDetails(rs.getInt("user_id"));
+
+                reviewList.add(new Review(user, hotel, rating, comment, createdAt));
+            }
+
+            return reviewList;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<Review> getUserReviews(User user) {
+        return getUserReviews(user.getUserId());
     }
 }
