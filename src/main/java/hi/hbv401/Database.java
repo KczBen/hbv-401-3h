@@ -489,6 +489,47 @@ public class Database {
         }
     }
 
+    public User getUserDetails(String userEamil) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    users AS u
+                    WHERE
+                        u.email = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, userEamil);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            int id = 0;
+            String name = null;
+            String email = null;
+            String phone = null;
+            List<Booking> reservations = null;
+
+            while (rs.next()) {
+                id = rs.getInt("id");
+                name = rs.getString("name");
+                email = rs.getString("email");
+                phone = rs.getString("phone");
+                reservations = getBookingForUser(id);
+            }
+
+            return new User(id, name, email, phone, reservations);
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
     public Integer createUser(User user) {
         try {
             Class.forName("org.sqlite.JDBC");
