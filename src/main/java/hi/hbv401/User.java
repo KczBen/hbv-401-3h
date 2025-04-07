@@ -18,6 +18,28 @@ public class User {
         this.reservations = (reservations != null) ? new ArrayList<>(reservations) : new ArrayList<>();
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("User ID: ").append(this.userId)
+          .append("\nName: ").append(this.name)
+          .append("\nEmail: ").append(this.email)
+          .append("\nPhone: ").append(this.phone);
+    
+        sb.append("\nReservations:");
+        if (reservations == null || reservations.isEmpty()) {
+            sb.append(" None");
+        } else {
+            for (Booking booking : reservations) {
+                sb.append("\n  - Hotel ID: ").append(booking.getHotelId())
+                  .append(", Room Number: ").append(booking.getRoomNumber())
+                  .append(", From: ").append(booking.getBookedFrom())
+                  .append(", Until: ").append(booking.getBookedUntil());
+            }
+        }
+    
+        return sb.toString();
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -35,6 +57,6 @@ public class User {
     }
 
     public List<Booking> getReservations() {
-        return new ArrayList<>(reservations);
+        return reservations;
     }
 }

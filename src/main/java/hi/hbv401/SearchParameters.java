@@ -1,6 +1,6 @@
 package hi.hbv401;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 /* Arguments to the search function in the database */
@@ -14,9 +14,8 @@ public class SearchParameters {
     public final Integer guestsMin;
     public final Integer guestsMax;
 
-    // TODO: Replace with LocalDate, we do not need time
-    public final LocalDateTime availableFrom;
-    public final LocalDateTime availableUntil;
+    public final LocalDate availableFrom;
+    public final LocalDate availableUntil;
 
     public final List<Integer> propertyTypes;
     public final Integer location;
@@ -27,8 +26,8 @@ public class SearchParameters {
                             Integer ratingMax, 
                             Integer guestsMin, 
                             Integer guestsMax, 
-                            LocalDateTime availableFrom, 
-                            LocalDateTime availableUntil, 
+                            LocalDate availableFrom, 
+                            LocalDate availableUntil, 
                             List<Integer> propertyTypes,
                             Integer location) {
 

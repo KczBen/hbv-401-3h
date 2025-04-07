@@ -1,5 +1,6 @@
 package hi.hbv401.ui;
 
+import hi.hbv401.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,6 +20,7 @@ public class HotelBookingApp extends Application {
     }
 
     public static void main(String[] args) {
+        Database.initialize("sql/database.db");
         launch(args);
     }
 }

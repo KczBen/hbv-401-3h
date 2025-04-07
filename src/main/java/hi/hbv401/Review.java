@@ -1,15 +1,15 @@
 package hi.hbv401;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Review {
     private final User user;
     private final Hotel hotel;
     private final int rating;
     private final String comment;
-    private final LocalDateTime createdAt;
+    private final LocalDate createdAt;
 
-    public Review(User user, Hotel hotel, int rating, String comment, LocalDateTime createdAt) {
+    public Review(User user, Hotel hotel, int rating, String comment, LocalDate createdAt) {
         if (rating < 1 || rating > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5.");
         }
@@ -36,7 +36,7 @@ public class Review {
         return comment;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 }

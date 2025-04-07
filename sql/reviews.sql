@@ -1,0 +1,38 @@
+CREATE TABLE reviews(
+   user_id  INTEGER  NOT NULL
+  ,hotel_id INTEGER  NOT NULL
+  ,rating   INTEGER  NOT NULL
+  ,content  VARCHAR(2047)
+  ,date     DATE  NOT NULL
+  ,PRIMARY KEY(user_id,hotel_id,rating,date)
+);
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (1,1,5,'Absolutely fantastic stay! The staff was incredibly friendly and helpful, the room was spotless, and the breakfast was delicious. Highly recommend!','2023-10-26');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (2,5,4,'Nice hotel, a bit dated in some areas but overall a good value for the price. The location was perfect for exploring the city.','2023-10-25');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (3,10,2,'Disappointing experience. The room was noisy, the air conditioning didn''t work properly, and the service was slow. Not worth the money.','2023-10-24');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (4,15,5,'Amazing hotel! Beautiful views, luxurious amenities, and exceptional service. Will definitely be back.','2023-10-23');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (5,2,3,'It was okay. Nothing special, but nothing terrible either. A standard hotel with standard amenities.','2023-10-22');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (6,8,4,'Good location, close to restaurants and attractions. The rooms were clean and comfortable. A solid choice for a short stay.','2023-10-21');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (7,12,1,'Terrible! Dirty room, rude staff, and constant noise. I wouldn''t recommend this hotel to anyone.','2023-10-20');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (8,18,5,'Loved the rooftop pool and the friendly atmosphere. The hotel was well-maintained and the staff went above and beyond to make our stay enjoyable.','2023-10-19');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (9,3,4,'Convenient location near the airport. The hotel is clean and the staff are polite. A good option for travelers needing a quick overnight stay.','2023-10-18');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (10,7,3,'Decent hotel for the price. The breakfast was a bit basic, and the rooms could use some updating, but overall it was a comfortable stay.','2023-10-17');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (1,6,4,'The hotel was clean and in a good location. The breakfast buffet was a little small, but overall a pleasant experience.','2023-10-16');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (2,11,5,'Outstanding service! Everyone was so friendly and helpful. The room was spacious and well-appointed. A truly memorable stay.','2023-10-15');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (3,16,2,'Very disappointed with this hotel. The room was small and cramped, and there were several maintenance issues. Not recommended.','2023-10-14');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (4,19,4,'A comfortable and convenient hotel for business travelers. The rooms are well-equipped with a work desk and reliable Wi-Fi.','2023-10-13');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (5,4,5,'Beautiful hotel with a stunning view! The staff was exceptionally friendly and helpful. A perfect getaway.','2023-10-12');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (6,9,3,'The hotel was adequate, but nothing stood out. It met my basic needs, but lacked any special amenities or charm.','2023-10-11');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (7,14,1,'Avoid this hotel at all costs! The room was filthy, the staff were unhelpful, and the overall experience was terrible.','2023-10-10');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (8,20,5,'Absolutely loved this hotel! The decor was modern and stylish, the rooms were luxurious, and the service was impeccable.','2023-10-09');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (9,17,4,'Good value for the price. The rooms were clean and comfortable, and the location was convenient. A solid choice for budget travelers.','2023-10-08');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (10,13,3,'The hotel was okay, but a bit noisy at night. The breakfast was decent, but the rooms could use some updating.','2023-10-07');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (1,19,2,'The hotel advertised free parking but it wasn''t available and there were no alternative parking options.  Room was also quite small.','2023-10-06');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (2,8,5,'Perfect for families! The hotel offered a kids'' club and a great pool area. The rooms were spacious and comfortable.','2023-10-05');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (3,15,4,'A great location for exploring the city. The rooms were clean and comfortable, but the decor was a little dated.','2023-10-04');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (4,1,3,'The staff were very friendly, but the hotel felt a bit run down and the gym facilities were poor.','2023-10-03');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (5,6,5,'Loved the spa! Relaxing and rejuvenating. The room was beautiful and the staff were attentive.','2023-10-02');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (6,10,2,'Overpriced for what you get. Small rooms and poor service. Not worth the money.','2023-10-01');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (7,17,4,'The location was great and the staff were helpful. Breakfast was a bit limited.','2023-09-30');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (8,3,5,'Excellent service and a beautiful hotel!  Will definitely book again.','2023-09-29');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (9,12,3,'Average hotel.  Nothing to complain about, but nothing to rave about either.','2023-09-28');
+INSERT INTO reviews(user_id,hotel_id,rating,content,date) VALUES (10,4,1,'The worst hotel experience ever! Dirty, noisy, and the staff were rude. AVOID!','2023-09-27');
