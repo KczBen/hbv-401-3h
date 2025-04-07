@@ -405,8 +405,8 @@ public class Database {
 
             pstmt.setInt(1, booking.getHotelId());
             pstmt.setInt(2, booking.getRoomNumber());
-            pstmt.setDate(3, java.sql.Date.valueOf(booking.getBookedFrom()));
-            pstmt.setDate(4, java.sql.Date.valueOf(booking.getBookedUntil()));
+            pstmt.setString(3, booking.getBookedFrom().toString());
+            pstmt.setString(4, booking.getBookedUntil().toString());
             pstmt.setInt(5, booking.getUser());
 
             pstmt.executeUpdate();
@@ -489,7 +489,48 @@ public class Database {
         }
     }
 
-    public void createUser(User user) {
+    public User getUserDetails(String userEamil) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT * FROM
+                    users AS u
+                    WHERE
+                        u.email = ?
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, userEamil);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            int id = 0;
+            String name = null;
+            String email = null;
+            String phone = null;
+            List<Booking> reservations = null;
+
+            while (rs.next()) {
+                id = rs.getInt("id");
+                name = rs.getString("name");
+                email = rs.getString("email");
+                phone = rs.getString("phone");
+                reservations = getBookingForUser(id);
+            }
+
+            return new User(id, name, email, phone, reservations);
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public Integer createUser(User user) {
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(dbUrl);
@@ -506,10 +547,20 @@ public class Database {
             pstmt.setString(3, user.getPhone());
 
             pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int userId = rs.getInt(1);
+                
+                return userId;
+            }
+
+            return null;
         }
 
         catch (Exception e) {
             System.err.println(e);
+            return null;
         }
     }
 
@@ -618,7 +669,7 @@ public class Database {
             pstmt.setInt(2, review.getHotel().getHotelId());
             pstmt.setInt(3, review.getRating());
             pstmt.setString(4, review.getComment());
-            pstmt.setDate(5, java.sql.Date.valueOf(review.getCreatedAt()));
+            pstmt.setString(5, review.getCreatedAt().toString());
 
             pstmt.executeUpdate();
         }
