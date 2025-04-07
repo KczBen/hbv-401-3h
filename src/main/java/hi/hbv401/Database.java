@@ -513,7 +513,7 @@ public class Database {
     }
 
     public List<Review> getHotelReviews(Hotel hotel) {
-        return getHotelReviews(hotel.hotelId);
+        return getHotelReviews(hotel.getHotelId());
     }
 
     public List<Review> getUserReviews(int userId) {

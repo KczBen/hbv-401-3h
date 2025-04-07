@@ -3,17 +3,17 @@ package hi.hbv401;
 import java.util.*;
 
 public class Hotel {
-    public final int hotelId;
-    public final String name;
-    public final float rating;
-    public final String description;
-    public final List<String> photos;
-    public final int startingPrice;
-    public final List<Room> rooms;
-    public final String cancelPolicy;
-    public final String phone;
-    public final String email;
-    public final String address;
+    private final int hotelId;
+    private final String name;
+    private final float rating;
+    private final String description;
+    private final List<String> photos;
+    private final int startingPrice;
+    private final List<Room> rooms;
+    private final String cancelPolicy;
+    private final String phone;
+    private final String email;
+    private final String address;
 
     public Hotel(int hotelId, String name, float rating, String description, List<String> photos, int startingPrice,
             List<Room> rooms, String cancelPolicy, String phone, String email, String address) {
@@ -55,5 +55,49 @@ public class Hotel {
         sb.append("\n");
     
         return sb.toString();
+    }
+
+    public int getHotelId() {
+        return hotelId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<String> getPhotos() {
+        return photos;
+    }
+
+    public int getStartingPrice() {
+        return startingPrice;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public String getCancelPolicy() {
+        return cancelPolicy;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getAddress() {
+        return address;
     }
 }
