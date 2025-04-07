@@ -4,7 +4,7 @@ CREATE TABLE bookings(
   ,booked_from  DATE  NOT NULL
   ,booked_until DATE  NOT NULL
   ,user_id      INTEGER  NOT NULL
-  ,PRIMARY KEY(hotel_id,room_number,booked_from,user_id)
+  ,PRIMARY KEY(hotel_id,room_number,user_id)
 );
 INSERT INTO bookings(hotel_id,room_number,booked_from,booked_until,user_id) VALUES (1,101,'2025-03-01','2025-03-05',1);
 INSERT INTO bookings(hotel_id,room_number,booked_from,booked_until,user_id) VALUES (1,101,'2025-03-06','2025-03-10',2);
