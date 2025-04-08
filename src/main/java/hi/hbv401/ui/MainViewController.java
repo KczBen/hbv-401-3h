@@ -105,6 +105,7 @@ public class MainViewController {
         ObservableList<String> roomTypes = FXCollections.observableArrayList(
             db.getRoomTypes()
         );
+        roomTypes.add(0, "Any");
         roomTypeCombo.setItems(roomTypes);
         roomTypeCombo.getSelectionModel().selectFirst();
     }
@@ -113,6 +114,7 @@ public class MainViewController {
         ObservableList<String> locations = FXCollections.observableArrayList(
             db.getLocations()
         );
+        locations.add(0, "Any");
         locationCombo.setItems(locations);
         locationCombo.getSelectionModel().selectFirst();
     }
@@ -125,13 +127,21 @@ public class MainViewController {
     public void handleSearch(ActionEvent actionEvent) {
         System.out.println("Search button clicked!");
 
-        String location = locationCombo.getValue();
+        String location = locationCombo.getValue() != "Any" ? locationCombo.getValue() : null;
         LocalDate checkIn = checkInDate.getValue() != null ? LocalDate.parse(checkInDate.getValue().toString()) : null;
         LocalDate checkOut = checkOutDate.getValue() != null ? LocalDate.parse(checkOutDate.getValue().toString()) : null;
         int guests = guestsSpinner.getValue();
-        String roomType = roomTypeCombo.getValue();
+
+        // Handle multiple room types
+        String roomType = roomTypeCombo.getValue() != "Any" ? roomTypeCombo.getValue() : null;
         List<String> roomTypes = new ArrayList<String>();
-        roomTypes.add(roomTypeCombo.getValue());
+        if (roomType == null) {
+            roomTypes.addAll(db.getRoomTypes());
+        }
+
+        else {
+            roomTypes.add(roomType);
+        }
 
         System.out.println("Location: " + location);
         System.out.println("Check-in: " + checkIn);
