@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.controlsfx.control.RangeSlider;
 
-import javafx.scene.input.MouseEvent;
-
 import hi.hbv401.Database;
 import hi.hbv401.Hotel;
 import hi.hbv401.SearchParameters;
@@ -16,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.beans.binding.Bindings;
 
 public class MainViewController {
 
