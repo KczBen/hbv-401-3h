@@ -13,8 +13,11 @@ import hi.hbv401.SearchParameters;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -52,6 +55,37 @@ public class MainViewController {
     // Display
     @FXML
     private VBox hotelListContainer;
+
+    // Log in
+    @FXML
+    private Button logInButton;
+
+    // Booking data
+    private LocalDate checkIn;
+    private LocalDate checkOut;
+
+    private Stage primaryStage;
+    
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+    }
+
+    @FXML
+    private void handleNavigation() {
+        try {
+            // Take them to the login page without an active booking
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+            Parent root = loader.load();
+            
+            LoginController controller = loader.getController();
+            controller.setBooking(null);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void initialize() {
@@ -135,6 +169,8 @@ public class MainViewController {
 
                 HotelCardController controller = loader.getController();
                 controller.setHotel(hotel);
+                controller.setBookFrom(checkIn);
+                controller.setBookUntil(checkOut);
 
                 hotelListContainer.getChildren().add(hotelCard);
             } catch (IOException e) {
@@ -145,11 +181,9 @@ public class MainViewController {
 
     @FXML
     public void handleSearch(ActionEvent actionEvent) {
-        System.out.println("Search button clicked!");
-
         String location = locationCombo.getValue() != "Any" ? locationCombo.getValue() : null;
-        LocalDate checkIn = checkInDate.getValue() != null ? LocalDate.parse(checkInDate.getValue().toString()) : null;
-        LocalDate checkOut = checkOutDate.getValue() != null ? LocalDate.parse(checkOutDate.getValue().toString()) : null;
+        checkIn = checkInDate.getValue() != null ? LocalDate.parse(checkInDate.getValue().toString()) : null;
+        checkOut = checkOutDate.getValue() != null ? LocalDate.parse(checkOutDate.getValue().toString()) : null;
         int guests = guestsSpinner.getValue();
 
         // Handle multiple room types
@@ -162,12 +196,6 @@ public class MainViewController {
         else {
             roomTypes.add(roomType);
         }
-
-        System.out.println("Location: " + location);
-        System.out.println("Check-in: " + checkIn);
-        System.out.println("Check-out: " + checkOut);
-        System.out.println("Guests: " + guests);
-        System.out.println("Room type: " + roomType);
 
         SearchParameters params = new SearchParameters(
             (int)priceRange.getLowValue(),

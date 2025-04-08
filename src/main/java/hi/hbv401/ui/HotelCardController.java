@@ -1,12 +1,18 @@
 package hi.hbv401.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
 
+import hi.hbv401.Booking;
 import hi.hbv401.Hotel;
 import hi.hbv401.Room;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
@@ -14,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class HotelCardController {
     @FXML private Label hotelName;
@@ -24,6 +31,16 @@ public class HotelCardController {
     @FXML private VBox roomList;
     @FXML private ImageView indexPhoto;
 
+    private LocalDate bookFrom;
+    private LocalDate bookUntil;
+
+    public void setBookFrom(LocalDate bookFrom) {
+        this.bookFrom = bookFrom;
+    }
+
+    public void setBookUntil(LocalDate bookUntil) {
+        this.bookUntil = bookUntil;
+    }
 
     public void setHotel(Hotel hotel) {
         hotelName.setText(hotel.getName());
@@ -48,8 +65,22 @@ public class HotelCardController {
             Button bookButton = new Button("Book");
             
             bookButton.setOnAction(e -> {
-                // no booking yet, should take you to a "payment" page
-                System.out.println("Booking room " + room.getRoomNumber() + " at hotel " + hotel.getName());
+                Booking booking = new Booking(bookFrom, bookUntil, 0, room.getHotelID(), room.getRoomNumber());
+
+                // Take user to login page with an active booking
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+                    Parent root = loader.load();
+                    
+                    Stage stage = (Stage) bookButton.getScene().getWindow();
+                    LoginController controller = loader.getController();
+                    controller.setBooking(booking);
+
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             });
 
             roomBox.getChildren().addAll(roomInfo, bookButton);
