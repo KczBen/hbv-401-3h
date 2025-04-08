@@ -8,8 +8,8 @@ public class SearchParameters {
     public final Integer priceMin;
     public final Integer priceMax;
     
-    public final Integer ratingMin;
-    public final Integer ratingMax;
+    public final Double ratingMin;
+    public final Double ratingMax;
 
     public final Integer guestsMin;
     public final Integer guestsMax;
@@ -22,8 +22,8 @@ public class SearchParameters {
 
     public SearchParameters(Integer priceMin, 
                             Integer priceMax, 
-                            Integer ratingMin, 
-                            Integer ratingMax, 
+                            Double ratingMin, 
+                            Double ratingMax, 
                             Integer guestsMin, 
                             Integer guestsMax, 
                             LocalDate availableFrom, 
