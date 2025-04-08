@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.controlsfx.control.RangeSlider;
 
-import javafx.scene.input.MouseEvent;
-
 import hi.hbv401.Database;
 import hi.hbv401.Hotel;
 import hi.hbv401.SearchParameters;
@@ -16,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.beans.binding.Bindings;
 
 public class MainViewController {
 
@@ -32,12 +29,20 @@ public class MainViewController {
     private ComboBox<String> roomTypeCombo;
     @FXML
     private TableView<Hotel> hotelTableView;
+    // Price
     @FXML
     private RangeSlider priceRange;
     @FXML
     private Label minPriceLabel;
     @FXML
     private Label maxPriceLabel;
+    // Rating
+    @FXML
+    private RangeSlider ratingRange;
+    @FXML
+    private Label minRatingLabel;
+    @FXML
+    private Label maxRatingLabel;
 
     private Database db = Database.getInstance();
 
@@ -48,6 +53,7 @@ public class MainViewController {
         configureRoomTypes();
         configureLocations();
         configurePriceRange();
+        configureRatingRange();
 
         // Set initial value for spinner
         if (guestsSpinner.getValue() == null) {
@@ -72,6 +78,26 @@ public class MainViewController {
     
         priceRange.setLowValue((double)prices.get(0));
         priceRange.setHighValue((double)prices.get(1));
+    }
+
+    private void configureRatingRange() {
+        List<Double> ratings = new ArrayList<Double>();
+        ratings.add(0.0);
+        ratings.add(10.0);
+
+        ratingRange.lowValueProperty().addListener((obs, oldVal, newVal) -> {
+            minRatingLabel.setText(String.format("%.1f", newVal.doubleValue()));
+        });
+
+        ratingRange.highValueProperty().addListener((obs, oldVal, newVal) -> {
+            maxRatingLabel.setText(String.format("%.1f", newVal.doubleValue()));
+        });
+
+        ratingRange.setMin(ratings.get(0));
+        ratingRange.setMax(ratings.get(1));
+    
+        ratingRange.setLowValue((double)ratings.get(0));
+        ratingRange.setHighValue((double)ratings.get(1));
     }
 
     private void configureRoomTypes() {
@@ -116,14 +142,14 @@ public class MainViewController {
         SearchParameters params = new SearchParameters(
             (int)priceRange.getLowValue(),
             (int)priceRange.getHighValue(),
-            null,
-            null,
-            guestsSpinner.getValue(),
+            ratingRange.getLowValue(),
+            ratingRange.getHighValue(),
+            guests,
             null,
             checkIn,
             checkOut,
             roomTypes,
-            locationCombo.getValue());
+            location);
 
         List<Hotel> results = db.searchHotels(params);
 

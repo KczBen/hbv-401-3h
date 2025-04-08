@@ -64,6 +64,15 @@
                   <Label fx:id="maxPriceLabel" text="Max Price" />
                </children>
             </HBox>
+                <Label text="Rating" GridPane.rowIndex="7" />
+                <RangeSlider fx:id="ratingRange" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+               <children>
+                  <Label fx:id="minRatingLabel" text="Min Rating" />
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <Label fx:id="maxRatingLabel" text="Max Rating" />
+               </children>
+            </HBox>
             <rowConstraints>
                <RowConstraints />
                <RowConstraints />
