@@ -13,10 +13,11 @@ public class Hotel {
     private final String cancelPolicy;
     private final String phone;
     private final String email;
+    private final String city;
     private final String address;
 
     public Hotel(int hotelId, String name, float rating, String description, List<String> photos, int startingPrice,
-            List<Room> rooms, String cancelPolicy, String phone, String email, String address) {
+            List<Room> rooms, String cancelPolicy, String phone, String email, String city, String address) {
         this.hotelId = hotelId;
         this.name = name;
         this.rating = rating;
@@ -27,6 +28,7 @@ public class Hotel {
         this.cancelPolicy = cancelPolicy;
         this.phone = phone;
         this.email = email;
+        this.city = city;
         this.address = address;
     }
 
@@ -41,6 +43,7 @@ public class Hotel {
           .append("\nCancel Policy: ").append(this.cancelPolicy)
           .append("\nPhone: ").append(this.phone)
           .append("\nEmail: ").append(this.email)
+          .append("\nCity: ").append(this.city)
           .append("\nAddress: ").append(this.address);
     
         sb.append("\nRooms: ");

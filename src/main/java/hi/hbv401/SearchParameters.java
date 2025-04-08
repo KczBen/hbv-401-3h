@@ -17,8 +17,8 @@ public class SearchParameters {
     public final LocalDate availableFrom;
     public final LocalDate availableUntil;
 
-    public final List<Integer> propertyTypes;
-    public final Integer location;
+    public final List<String> propertyTypes;
+    public final String location;
 
     public SearchParameters(Integer priceMin, 
                             Integer priceMax, 
@@ -28,8 +28,8 @@ public class SearchParameters {
                             Integer guestsMax, 
                             LocalDate availableFrom, 
                             LocalDate availableUntil, 
-                            List<Integer> propertyTypes,
-                            Integer location) {
+                            List<String> propertyTypes,
+                            String location) {
 
         this.priceMin = priceMin;
         this.priceMax = priceMax;
