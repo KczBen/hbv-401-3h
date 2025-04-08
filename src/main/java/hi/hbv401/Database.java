@@ -83,6 +83,21 @@ public class Database {
                 sqlParams.add(params.guestsMax);
             }
 
+            // city
+            if (params.location != null) {
+                sql.append("AND city = ? ");
+                sqlParams.add(params.location);
+            }
+
+            // property type
+            if (params.propertyTypes != null) {
+                String placeholders = params.propertyTypes.stream()
+                    .map(type -> "?")
+                    .collect(Collectors.joining(", "));
+                    sql.append("AND r.type IN (" + placeholders + ") ");
+                sqlParams.addAll(params.propertyTypes);
+            }
+
             // availability
             if (params.availableFrom != null || params.availableUntil != null)
             {
@@ -198,6 +213,7 @@ public class Database {
             String cancelPolicy = "";
             String phone = "";
             String email = "";
+            String city = "";
             String address = "";
 
             while (rs.next()) {
@@ -206,13 +222,14 @@ public class Database {
                 rating = rs.getInt("rating");
                 short_description = rs.getString("short_description");
                 photos.add(rs.getString("index_photo"));
-                address = rs.getString("location");
+                city = rs.getString("city");
+                address = rs.getString("address");
                 cancelPolicy = rs.getString("cancellation_policy");
                 phone = rs.getString("phone");
                 email = rs.getString("email");
             }
 
-            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
+            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, city, address);
         }
 
         catch (Exception e) {
@@ -280,6 +297,7 @@ public class Database {
             String cancelPolicy = "";
             String phone = "";
             String email = "";
+            String city = "";
             String address = "";
 
             while (rs.next()) {
@@ -288,13 +306,108 @@ public class Database {
                 rating = rs.getInt("rating");
                 short_description = rs.getString("short_description");
                 photos.add(rs.getString("index_photo"));
-                address = rs.getString("location");
+                city = rs.getString("city");
+                address = rs.getString("address");
                 cancelPolicy = rs.getString("cancellation_policy");
                 phone = rs.getString("phone");
                 email = rs.getString("email");
             }
 
-            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, address);
+            return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, city, address);
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    /* Hotels - Types */
+    public List<Integer> getPriceRange() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT MIN(price) AS min_price, MAX(price) as max_price FROM rooms
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<Integer> priceRange = new ArrayList<>();
+
+            while (rs.next()) {
+                int minPrice = rs.getInt("min_price");
+                priceRange.add(minPrice);
+                int maxPrice = rs.getInt("max_price");
+                priceRange.add(maxPrice);
+            }
+
+            return priceRange;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<String> getLocations() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT city
+                FROM hotels
+
+                GROUP BY city
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<String> locations = new ArrayList<>();
+
+            while (rs.next()) {
+                locations.add(rs.getString("city"));
+            }
+
+            return locations;
+        }
+
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<String> getRoomTypes() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(dbUrl);
+
+            String sql = """
+                SELECT type
+                FROM rooms
+
+                GROUP BY type
+                """;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+            
+            List<String> types = new ArrayList<>();
+
+            while (rs.next()) {
+                types.add(rs.getString("type"));
+            }
+
+            return types;
         }
 
         catch (Exception e) {
