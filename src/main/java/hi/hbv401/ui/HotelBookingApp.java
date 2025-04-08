@@ -14,6 +14,9 @@ public class HotelBookingApp extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
         Parent root = loader.load();
 
+        MainViewController controller = loader.getController();
+        controller.setPrimaryStage(primaryStage);
+
         primaryStage.setTitle("Hotel Booking");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();

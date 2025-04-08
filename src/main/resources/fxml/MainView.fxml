@@ -29,6 +29,7 @@
     <!-- Center Section - Booking Form + Scrollable Hotel List -->
     <center>
         <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40px;">
+         <Button fx:id="logInButton" text="Log in or register" onAction="#handleNavigation"/>
             <Text style="-fx-font-size: 24px; -fx-fill: #2a2a2a;" text="Book Your Perfect Stay" />
 
             <GridPane alignment="CENTER" hgap="20" vgap="15">
@@ -81,6 +82,8 @@
                <RowConstraints />
                <RowConstraints minHeight="10.0" prefHeight="30.0" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" />
+               <RowConstraints />
+               <RowConstraints />
             </rowConstraints>
             </GridPane>
 

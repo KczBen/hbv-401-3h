@@ -632,9 +632,10 @@ public class Database {
                 email = rs.getString("email");
                 phone = rs.getString("phone");
                 reservations = getBookingForUser(id);
+                return new User(id, name, email, phone, reservations);
             }
 
-            return new User(id, name, email, phone, reservations);
+            return null;
         }
 
         catch (Exception e) {
