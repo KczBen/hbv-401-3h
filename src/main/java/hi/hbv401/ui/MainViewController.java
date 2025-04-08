@@ -1,5 +1,6 @@
 package hi.hbv401.ui;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,9 @@ import hi.hbv401.Hotel;
 import hi.hbv401.SearchParameters;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -46,10 +49,13 @@ public class MainViewController {
 
     private Database db = Database.getInstance();
 
+    // Display
+    @FXML
+    private VBox hotelListContainer;
+
     @FXML
     private void initialize() {
         System.out.println("MainViewController initialized!");
-        configureTable();
         configureRoomTypes();
         configureLocations();
         configurePriceRange();
@@ -105,6 +111,7 @@ public class MainViewController {
         ObservableList<String> roomTypes = FXCollections.observableArrayList(
             db.getRoomTypes()
         );
+        roomTypes.add(0, "Any");
         roomTypeCombo.setItems(roomTypes);
         roomTypeCombo.getSelectionModel().selectFirst();
     }
@@ -113,25 +120,48 @@ public class MainViewController {
         ObservableList<String> locations = FXCollections.observableArrayList(
             db.getLocations()
         );
+        locations.add(0, "Any");
         locationCombo.setItems(locations);
         locationCombo.getSelectionModel().selectFirst();
     }
 
-    private void configureTable() {
-        // Will implement table configuration as needed
+    private void configureTable(List<Hotel> hotels) {
+        hotelListContainer.getChildren().clear();
+
+        for (Hotel hotel : hotels) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HotelCard.fxml"));
+                VBox hotelCard = loader.load();
+
+                HotelCardController controller = loader.getController();
+                controller.setHotel(hotel);
+
+                hotelListContainer.getChildren().add(hotelCard);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @FXML
     public void handleSearch(ActionEvent actionEvent) {
         System.out.println("Search button clicked!");
 
-        String location = locationCombo.getValue();
+        String location = locationCombo.getValue() != "Any" ? locationCombo.getValue() : null;
         LocalDate checkIn = checkInDate.getValue() != null ? LocalDate.parse(checkInDate.getValue().toString()) : null;
         LocalDate checkOut = checkOutDate.getValue() != null ? LocalDate.parse(checkOutDate.getValue().toString()) : null;
         int guests = guestsSpinner.getValue();
-        String roomType = roomTypeCombo.getValue();
+
+        // Handle multiple room types
+        String roomType = roomTypeCombo.getValue() != "Any" ? roomTypeCombo.getValue() : null;
         List<String> roomTypes = new ArrayList<String>();
-        roomTypes.add(roomTypeCombo.getValue());
+        if (roomType == null) {
+            roomTypes.addAll(db.getRoomTypes());
+        }
+
+        else {
+            roomTypes.add(roomType);
+        }
 
         System.out.println("Location: " + location);
         System.out.println("Check-in: " + checkIn);
@@ -154,6 +184,8 @@ public class MainViewController {
         List<Hotel> results = db.searchHotels(params);
 
         System.out.println(results);
-        // We'll populate the table later
+        
+
+        configureTable(results);
     }
 }
