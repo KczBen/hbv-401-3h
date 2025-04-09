@@ -28,74 +28,81 @@
 
     <!-- Center Section - Booking Form + Scrollable Hotel List -->
     <center>
-        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40px;">
-         <Button fx:id="logInButton" text="Log in or register" onAction="#handleNavigation"/>
-            <Text style="-fx-font-size: 24px; -fx-fill: #2a2a2a;" text="Book Your Perfect Stay" />
+        <HBox alignment="TOP_CENTER" spacing="40" style="-fx-padding: 40px;">
 
-            <GridPane alignment="CENTER" hgap="20" vgap="15">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="200" />
-                    <ColumnConstraints prefWidth="200" />
-                </columnConstraints>
+            <!-- Left Side: Booking Form -->
+            <VBox alignment="TOP_CENTER" spacing="20">
+                <Button fx:id="logInButton" text="Log in or register" onAction="#handleNavigation"/>
+                <Text style="-fx-font-size: 24px; -fx-fill: #2a2a2a;" text="Book Your Perfect Stay" />
 
-                <Label text="Destination:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <ComboBox fx:id="locationCombo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <GridPane alignment="CENTER" hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="200" />
+                        <ColumnConstraints prefWidth="200" />
+                    </columnConstraints>
 
-                <Label text="Check-in Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <DatePicker fx:id="checkInDate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Destination:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <ComboBox fx:id="locationCombo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                <Label text="Check-out Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <DatePicker fx:id="checkOutDate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Check-in Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <DatePicker fx:id="checkInDate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Label text="Guests:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <Spinner fx:id="guestsSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                    <valueFactory>
-                        <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="1" max="8" min="1" />
-                    </valueFactory>
-                </Spinner>
+                    <Label text="Check-out Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <DatePicker fx:id="checkOutDate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                <Label text="Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <ComboBox fx:id="roomTypeCombo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="Price" GridPane.rowIndex="5" />
-                <RangeSlider fx:id="priceRange" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-               <children>
-                  <Label fx:id="minPriceLabel" text="Min Price" />
-                  <Pane HBox.hgrow="ALWAYS" />
-                  <Label fx:id="maxPriceLabel" text="Max Price" />
-               </children>
-            </HBox>
-                <Label text="Rating" GridPane.rowIndex="7" />
-                <RangeSlider fx:id="ratingRange" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-               <children>
-                  <Label fx:id="minRatingLabel" text="Min Rating" />
-                  <Pane HBox.hgrow="ALWAYS" />
-                  <Label fx:id="maxRatingLabel" text="Max Rating" />
-               </children>
-            </HBox>
-            <rowConstraints>
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" />
-               <RowConstraints />
-               <RowConstraints />
-            </rowConstraints>
-            </GridPane>
+                    <Label text="Guests:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Spinner fx:id="guestsSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="1" max="8" min="1" />
+                        </valueFactory>
+                    </Spinner>
 
-            <Button onAction="#handleSearch" style="-fx-font-size: 16px; -fx-background-color: #007bff; -fx-text-fill: white;" text="Search Availability" />
+                    <Label text="Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <ComboBox fx:id="roomTypeCombo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-            <!-- Scrollable area for hotels -->
-            <ScrollPane fx:id="hotelScrollPane" fitToWidth="true" style="-fx-pref-height: 300;" VBox.vgrow="ALWAYS">
+                    <Label text="Price" GridPane.rowIndex="5" />
+                    <RangeSlider fx:id="priceRange" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <children>
+                            <Label fx:id="minPriceLabel" text="Min Price" />
+                            <Pane HBox.hgrow="ALWAYS" />
+                            <Label fx:id="maxPriceLabel" text="Max Price" />
+                        </children>
+                    </HBox>
+
+                    <Label text="Rating" GridPane.rowIndex="7" />
+                    <RangeSlider fx:id="ratingRange" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                    <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                        <children>
+                            <Label fx:id="minRatingLabel" text="Min Rating" />
+                            <Pane HBox.hgrow="ALWAYS" />
+                            <Label fx:id="maxRatingLabel" text="Max Rating" />
+                        </children>
+                    </HBox>
+
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+
+                <Button onAction="#handleSearch" style="-fx-font-size: 16px; -fx-background-color: #007bff; -fx-text-fill: white;" text="Search Availability" />
+            </VBox>
+
+            <!-- Right Side: Scrollable area for hotels -->
+            <ScrollPane fx:id="hotelScrollPane" fitToWidth="true" style="-fx-pref-height: 600; -fx-pref-width: 400;" HBox.hgrow="ALWAYS">
                 <VBox fx:id="hotelListContainer" alignment="CENTER_LEFT" spacing="15">
                     <!-- We'll add "hotel card" nodes here from the controller -->
                 </VBox>
             </ScrollPane>
-        </VBox>
+        </HBox>
     </center>
 
     <!-- Bottom Section - Footer -->
