@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import hi.hbv401.Booking;
 import hi.hbv401.Database;
+import hi.hbv401.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,10 +30,11 @@ public class LoginCodeController {
 
         if (validateCode(code)) {
             // Code in the right format, now check if they are registered
-            if (db.getUserDetails(userEmail) != null) {
-                // They are registered
+            User user = db.getUserDetails(userEmail);
+            // They are registered
+            if (user != null) {
+                // We got here from a booking, take them to the booking page
                 if (booking != null) {
-                    // We got here from a booking, take them to the booking page
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BookingView.fxml"));
                         Parent root = loader.load();
@@ -40,7 +42,7 @@ public class LoginCodeController {
                         Stage stage = (Stage) backButton.getScene().getWindow();
                         BookingController controller = loader.getController();
                         controller.setBooking(booking);
-                        controller.setUser(db.getUserDetails(userEmail));
+                        controller.setUser(user);
                         controller.init();
         
                         Scene scene = new Scene(root);
@@ -50,15 +52,16 @@ public class LoginCodeController {
                     }
                 }
 
+                // We got here from a login, take them to the user page
                 else {
-                    // We got here from a login, take them to the user page
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserView.fxml"));
                         Parent root = loader.load();
                         
                         Stage stage = (Stage) backButton.getScene().getWindow();
                         UserPageController controller = loader.getController();
-                        controller.setUser(db.getUserDetails(userEmail));
+                        controller.setUser(user);
+                        controller.init();
         
                         Scene scene = new Scene(root);
                         stage.setScene(scene);
@@ -68,8 +71,8 @@ public class LoginCodeController {
                 }
             }
 
+            // Not registered, ask more info
             else {
-                // Not registered, ask more info
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RegistrationView.fxml"));
                     Parent root = loader.load();

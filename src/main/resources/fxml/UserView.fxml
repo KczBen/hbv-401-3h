@@ -37,6 +37,7 @@
                     <!-- We'll add "hotel card" nodes here from the controller -->
                 </VBox>
             </ScrollPane>
+            <Button fx:id="homeButton" onAction="#handleHome" text="Back to search"/>
         </VBox>
     </center>
 
