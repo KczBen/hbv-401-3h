@@ -2,6 +2,7 @@ package hi.hbv401.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import hi.hbv401.Booking;
 import hi.hbv401.Database;
@@ -32,8 +33,10 @@ public class RegistrationController {
     @FXML
     private void handleSubmit() {
         // Create a new user, and add it to the database
-        User user = new User(null, userName.getText(), userEmail, userPhone.getText(), new ArrayList<Booking>());
-        // TODO: ADD TO DATABASE
+        List<Booking> bookings = new ArrayList<Booking>();
+        User user = new User(null, userName.getText(), userEmail, userPhone.getText(), bookings);
+
+        db.createUser(user);
 
         // If we got here from a booking, boot them straight to the booking page, else take them to search
         if (booking != null) {
@@ -44,7 +47,9 @@ public class RegistrationController {
                 Stage stage = (Stage) backButton.getScene().getWindow();
                 BookingController controller = loader.getController();
                 controller.setBooking(booking);
+                // Need to do this because the database auto-assigns IDs
                 controller.setUser(db.getUserDetails(userEmail));
+                controller.init();
 
                 Scene scene = new Scene(root);
                 stage.setScene(scene);

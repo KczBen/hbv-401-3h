@@ -18,8 +18,10 @@
         <VBox>
             <Label fx:id="hotelName" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
             <Label fx:id="rating" />
-            <Label fx:id="description" wrapText="true" />
             <Label fx:id="startingPrice" />
+            <Label fx:id="description" wrapText="true" />
+            <Label fx:id="address" />
+            <Label fx:id="cancelPolicy" />
         </VBox>
     </HBox>
     

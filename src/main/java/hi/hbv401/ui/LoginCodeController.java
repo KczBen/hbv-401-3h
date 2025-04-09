@@ -41,6 +41,7 @@ public class LoginCodeController {
                         BookingController controller = loader.getController();
                         controller.setBooking(booking);
                         controller.setUser(db.getUserDetails(userEmail));
+                        controller.init();
         
                         Scene scene = new Scene(root);
                         stage.setScene(scene);

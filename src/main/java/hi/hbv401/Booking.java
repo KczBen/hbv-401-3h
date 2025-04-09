@@ -17,6 +17,19 @@ public class Booking {
         this.roomNumber = roomNumber;
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("User ID: ").append(this.userId)
+          .append("\nHotel ID: ").append(this.hotelId)
+          .append("\nRoom number: ").append(this.roomNumber)
+          .append("\nBooked from: ").append(this.bookedFrom)
+          .append("\nBooked until: ").append(this.bookedUntil);
+    
+        sb.append("\n");
+    
+        return sb.toString();
+    }
+
     public LocalDate getBookedFrom() {
         return bookedFrom;
     }
