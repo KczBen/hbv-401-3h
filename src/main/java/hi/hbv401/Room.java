@@ -7,13 +7,15 @@ public class Room {
     private final int price;
     private final String type;
     private final int maxGuests;
+    private final String amenities;
     
-    public Room(int hotelID, int roomNumber, int price, String type, int maxGuests) {
+    public Room(int hotelID, int roomNumber, int price, String type, int maxGuests, String amenities) {
         this.hotelID= hotelID;
         this.roomNumber = roomNumber;
         this.price = price;
         this.type = type;
         this.maxGuests = maxGuests;
+        this.amenities = amenities;
     }
 
     public int getHotelID() {
@@ -34,5 +36,9 @@ public class Room {
 
     public int getMaxGuests() {
         return maxGuests;
+    }
+
+    public String getAmenities() {
+        return amenities;
     }
 }

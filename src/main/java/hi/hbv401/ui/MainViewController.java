@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -89,7 +90,6 @@ public class MainViewController {
 
     @FXML
     private void initialize() {
-        System.out.println("MainViewController initialized!");
         configureRoomTypes();
         configureLocations();
         configurePriceRange();
@@ -100,6 +100,48 @@ public class MainViewController {
             guestsSpinner.getValueFactory().setValue(1);
         }
 
+        checkInDate.setValue(LocalDate.now());
+        checkOutDate.setValue(LocalDate.now().plusDays(1));
+
+        checkInDate.setDayCellFactory(getCheckInCellFactory());
+
+        checkOutDate.setDayCellFactory(getCheckOutCellFactory());
+
+        checkInDate.valueProperty().addListener((obs, oldVal, newVal) -> {
+            checkOutDate.setDayCellFactory(getCheckOutCellFactory());
+        });
+
+        checkOutDate.valueProperty().addListener((obs, oldVal, newVal) -> {
+            checkInDate.setDayCellFactory(getCheckInCellFactory());
+        });
+    }
+
+    private Callback<DatePicker, DateCell> getCheckInCellFactory() {
+        return datePicker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (checkOutDate.getValue() != null && item.isAfter(checkOutDate.getValue())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;");
+                }
+            }
+        };
+    }
+
+    private Callback<DatePicker, DateCell> getCheckOutCellFactory() {
+        return datePicker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (checkInDate.getValue() != null && item.isBefore(checkInDate.getValue())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;");
+                }
+            }
+        };
     }
     
     private void configurePriceRange() {
@@ -210,9 +252,6 @@ public class MainViewController {
             location);
 
         List<Hotel> results = db.searchHotels(params);
-
-        System.out.println(results);
-        
 
         configureTable(results);
     }

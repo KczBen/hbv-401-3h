@@ -1,0 +1,4 @@
+# Run
+```
+mvn javafx:run
+```
