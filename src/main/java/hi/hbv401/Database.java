@@ -4,7 +4,11 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import javafx.concurrent.Task;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,89 +42,90 @@ public class Database {
 
     /* Hotels - Search */
     public List<Hotel> searchHotels(SearchParameters params) {
-        try {
+        StringBuilder sql = new StringBuilder("""
+            SELECT h.hotel_id,r.room_number
+            FROM hotels AS h
+                LEFT JOIN rooms AS r ON h.hotel_id = r.hotel_id
+
+                WHERE 1=1 
+            """);
+        List<Object> sqlParams = new ArrayList<>();
+
+        // price
+        if (params.priceMin != null) {
+            sql.append("AND price >= ? ");
+            sqlParams.add(params.priceMin);
+        }
+        if (params.priceMax != null) {
+            sql.append("AND price <= ? ");
+            sqlParams.add(params.priceMax);
+        }
+
+        // rating
+        if (params.ratingMin != null) {
+            sql.append("AND rating >= ? ");
+            sqlParams.add(params.ratingMin);
+        }
+        if (params.ratingMax != null) {
+            sql.append("AND rating <= ? ");
+            sqlParams.add(params.ratingMax);
+        }
+
+        // guests
+        if (params.guestsMin != null) {
+            sql.append("AND max_guests >= ? ");
+            sqlParams.add(params.guestsMin);
+        }
+        if (params.guestsMax != null) {
+            sql.append("AND max_guests <= ? ");
+            sqlParams.add(params.guestsMax);
+        }
+
+        // city
+        if (params.location != null) {
+            sql.append("AND city = ? ");
+            sqlParams.add(params.location);
+        }
+
+        // property type
+        if (params.propertyTypes != null) {
+            String placeholders = params.propertyTypes.stream()
+                .map(type -> "?")
+                .collect(Collectors.joining(", "));
+                sql.append("AND r.type IN (" + placeholders + ") ");
+            sqlParams.addAll(params.propertyTypes);
+        }
+
+        // availability
+        if (params.availableFrom != null || params.availableUntil != null)
+        {
+            sql.append("""
+                AND NOT EXISTS ( 
+                    SELECT 1 FROM bookings AS b
+                        WHERE b.hotel_id = r.hotel_id
+                            AND b.room_number = r.room_number
+                """);
+
+            if (params.availableFrom != null) {
+                sql.append("AND b.booked_until > ? ");
+                if (params.availableUntil == null) {
+                    sql.append(")");
+                }
+                sqlParams.add(params.availableFrom.format(DateTimeFormatter.ISO_DATE));
+            }
+
+            if (params.availableUntil != null) {
+                sql.append("AND b.booked_from < ? )");
+                sqlParams.add(params.availableUntil.format(DateTimeFormatter.ISO_DATE));
+            }
+        }
+
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+            PreparedStatement stmt = conn.prepareStatement(sql.toString())){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
             /* Dynamically build the query, since nothing is expected to be specified */
             // base statement, joins rooms and catches all by default
-            StringBuilder sql = new StringBuilder("""
-                SELECT h.hotel_id,r.room_number
-                FROM hotels AS h
-                    LEFT JOIN rooms AS r ON h.hotel_id = r.hotel_id
-
-                    WHERE 1=1 
-                """);
-            List<Object> sqlParams = new ArrayList<>();
-
-            // price
-            if (params.priceMin != null) {
-                sql.append("AND price >= ? ");
-                sqlParams.add(params.priceMin);
-            }
-            if (params.priceMax != null) {
-                sql.append("AND price <= ? ");
-                sqlParams.add(params.priceMax);
-            }
-
-            // rating
-            if (params.ratingMin != null) {
-                sql.append("AND rating >= ? ");
-                sqlParams.add(params.ratingMin);
-            }
-            if (params.ratingMax != null) {
-                sql.append("AND rating <= ? ");
-                sqlParams.add(params.ratingMax);
-            }
-
-            // guests
-            if (params.guestsMin != null) {
-                sql.append("AND max_guests >= ? ");
-                sqlParams.add(params.guestsMin);
-            }
-            if (params.guestsMax != null) {
-                sql.append("AND max_guests <= ? ");
-                sqlParams.add(params.guestsMax);
-            }
-
-            // city
-            if (params.location != null) {
-                sql.append("AND city = ? ");
-                sqlParams.add(params.location);
-            }
-
-            // property type
-            if (params.propertyTypes != null) {
-                String placeholders = params.propertyTypes.stream()
-                    .map(type -> "?")
-                    .collect(Collectors.joining(", "));
-                    sql.append("AND r.type IN (" + placeholders + ") ");
-                sqlParams.addAll(params.propertyTypes);
-            }
-
-            // availability
-            if (params.availableFrom != null || params.availableUntil != null)
-            {
-                sql.append("""
-                    AND NOT EXISTS ( 
-                        SELECT 1 FROM bookings AS b
-                            WHERE b.hotel_id = r.hotel_id
-                                AND b.room_number = r.room_number
-                    """);
-
-                if (params.availableFrom != null) {
-                    sql.append("AND b.booked_until > ? ");
-                    if (params.availableUntil == null) {
-                        sql.append(")");
-                    }
-                    sqlParams.add(params.availableFrom.format(DateTimeFormatter.ISO_DATE));
-                }
-
-                if (params.availableUntil != null) {
-                    sql.append("AND b.booked_from < ? )");
-                    sqlParams.add(params.availableUntil.format(DateTimeFormatter.ISO_DATE));
-                }
-            }
             
             PreparedStatement pstmt = conn.prepareStatement(sql.toString());
             
@@ -143,7 +148,7 @@ public class Database {
 
             List<Hotel> hotelList = new ArrayList<>();
 
-            for (Map.Entry<Integer, Set<Integer>> entry : hotelIdToRoomNumbers.entrySet()) {
+            for (Map.Entry<Integer, Set<Integer>> entry: hotelIdToRoomNumbers.entrySet()) {
                 int hotelId = entry.getKey();
                 List<Integer> roomNumbers = new ArrayList<>(entry.getValue());
 
@@ -162,16 +167,16 @@ public class Database {
 
     public Hotel getHotelDetails(int hotel_id) {
         List<Integer> priceList = new ArrayList<Integer>();
-        try {
+        String sql = """
+            SELECT *
+                FROM rooms AS r
+                WHERE r.hotel_id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
             // get rooms first to make building the hotel easier
-            String sql = """
-                SELECT *
-                    FROM rooms AS r
-                    WHERE r.hotel_id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -187,11 +192,12 @@ public class Database {
                 String type = rs.getString("type");
                 Integer maxGuests = rs.getInt("max_guests");
                 Integer price = rs.getInt("price");
+                String amenities = rs.getString("amenities");
 
                 // Add price to the array so we can get the min price later
                 priceList.add(price);
 
-                roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests));
+                roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests, amenities));
             }
 
             sql = """
@@ -238,21 +244,21 @@ public class Database {
         }
     }
 
-    private Hotel getHotelDetailsFiltered(int hotel_id, List<Integer> includedRooms) {
+    public Hotel getHotelDetailsFiltered(int hotel_id, List<Integer> includedRooms) {
         List<Integer> priceList = new ArrayList<Integer>();
-        try {
+        String placeholders = includedRooms.stream()
+            .map(rn -> "?")
+            .collect(Collectors.joining(", "));
+
+        String sql = """
+            SELECT *
+                FROM rooms AS r
+                WHERE r.hotel_id = ?
+                    AND r.room_number IN (""" + placeholders + ")";
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String placeholders = includedRooms.stream()
-                .map(rn -> "?")
-                .collect(Collectors.joining(", "));
-
-            String sql = """
-                SELECT *
-                    FROM rooms AS r
-                    WHERE r.hotel_id = ?
-                        AND r.room_number IN (""" + placeholders + ")";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -271,11 +277,12 @@ public class Database {
                 String type = rs.getString("type");
                 Integer maxGuests = rs.getInt("max_guests");
                 Integer price = rs.getInt("price");
+                String amenities = rs.getString("amenities");
 
                 // Add price to the array so we can get the min price later
                 priceList.add(price);
 
-                roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests));
+                roomsList.add(new Room(hotelId, roomNumber, price, type, maxGuests, amenities));
             }
 
             sql = """
@@ -313,6 +320,7 @@ public class Database {
                 email = rs.getString("email");
             }
 
+            
             return new Hotel(hotelId, name, rating, short_description, photos, startingPrice, roomsList, cancelPolicy, phone, email, city, address);
         }
 
@@ -324,13 +332,13 @@ public class Database {
 
     /* Hotels - Types */
     public List<Integer> getPriceRange() {
-        try {
+        String sql = """
+            SELECT MIN(price) AS min_price, MAX(price) as max_price FROM rooms
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT MIN(price) AS min_price, MAX(price) as max_price FROM rooms
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -345,6 +353,7 @@ public class Database {
                 priceRange.add(maxPrice);
             }
 
+            
             return priceRange;
         }
 
@@ -355,16 +364,16 @@ public class Database {
     }
 
     public List<String> getLocations() {
-        try {
+        String sql = """
+            SELECT city
+            FROM hotels
+
+            GROUP BY city
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT city
-                FROM hotels
-
-                GROUP BY city
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -376,6 +385,7 @@ public class Database {
                 locations.add(rs.getString("city"));
             }
 
+            
             return locations;
         }
 
@@ -386,16 +396,16 @@ public class Database {
     }
 
     public List<String> getRoomTypes() {
-        try {
+        String sql = """
+            SELECT type
+            FROM rooms
+
+            GROUP BY type
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT type
-                FROM rooms
-
-                GROUP BY type
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -406,7 +416,8 @@ public class Database {
             while (rs.next()) {
                 types.add(rs.getString("type"));
             }
-
+            
+            
             return types;
         }
 
@@ -419,18 +430,18 @@ public class Database {
     /* Bookings */
     public List<Booking> getRoomBookings(int hotelId, int roomNumber) {
         // Select the given (hotel_id, roomNumber) key from the reservations table
-        try {
+        String sql = """
+            SELECT * FROM
+                bookings AS b
+                WHERE
+                    b.hotel_id = ?
+                    AND
+                    b.room_number = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    bookings AS b
-                    WHERE
-                        b.hotel_id = ?
-                        AND
-                        b.room_number = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -451,7 +462,8 @@ public class Database {
 
                 bookingList.add(new Booking(bookedFrom, bookedUntil, userId, dbhotelId, dbroomNumber));
             }
-
+            
+            
             return bookingList;
         }
 
@@ -462,16 +474,16 @@ public class Database {
     }
 
     public List<Booking> getBookingForUser(int userId) {
-        try {
+        String sql = """
+            SELECT * FROM
+                bookings AS b
+                WHERE
+                    b.user_id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    bookings AS b
-                    WHERE
-                        b.user_id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -490,7 +502,8 @@ public class Database {
 
                 bookingList.add(new Booking(bookedFrom, bookedUntil, userId, dbhotelId, dbroomNumber));
             }
-
+            
+            
             return bookingList;
         }
 
@@ -505,14 +518,14 @@ public class Database {
     }
 
     public void makeBooking(Booking booking) {
-        try {
+        String sql = """
+            INSERT INTO bookings (hotel_id, room_number, booked_from, booked_until, user_id)
+                VALUES (?, ?, ?, ?, ?)
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                INSERT INTO bookings (hotel_id, room_number, booked_from, booked_until, user_id)
-                    VALUES (?, ?, ?, ?, ?)
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -523,6 +536,8 @@ public class Database {
             pstmt.setInt(5, booking.getUser());
 
             pstmt.executeUpdate();
+                        
+            
         }
 
         catch (Exception e) {
@@ -531,20 +546,20 @@ public class Database {
     }
 
     public void cancelBooking(User user, int hotelId, int roomNumber) {
-        try {
+        String sql = """
+            DELETE FROM
+                bookings AS b
+                WHERE
+                    b.hotel_id = ?
+                    AND
+                    b.room_number = ?
+                    AND
+                    b.user_id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                DELETE FROM
-                    bookings AS b
-                    WHERE
-                        b.hotel_id = ?
-                        AND
-                        b.room_number = ?
-                        AND
-                        b.user_id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -553,6 +568,8 @@ public class Database {
             pstmt.setInt(3, user.getUserId());
 
             pstmt.executeQuery();
+                        
+            
         }
 
         catch(Exception e) {
@@ -562,16 +579,16 @@ public class Database {
 
     /* Users */
     public User getUserDetails(int userId) {
-        try {
+        String sql = """
+            SELECT * FROM
+                users AS u
+                WHERE
+                    u.id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    users AS u
-                    WHERE
-                        u.id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -592,7 +609,8 @@ public class Database {
                 phone = rs.getString("phone");
                 reservations = getBookingForUser(id);
             }
-
+            
+            
             return new User(id, name, email, phone, reservations);
         }
 
@@ -603,16 +621,16 @@ public class Database {
     }
 
     public User getUserDetails(String userEamil) {
-        try {
+        String sql = """
+            SELECT * FROM
+                users AS u
+                WHERE
+                    u.email = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    users AS u
-                    WHERE
-                        u.email = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -634,7 +652,8 @@ public class Database {
                 reservations = getBookingForUser(id);
                 return new User(id, name, email, phone, reservations);
             }
-
+            
+            
             return null;
         }
 
@@ -645,14 +664,14 @@ public class Database {
     }
 
     public Integer createUser(User user) {
-        try {
+        String sql = """
+            INSERT INTO users (name, email, phone)
+            VALUES (?, ?, ?)
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                INSERT INTO users (name, email, phone)
-                VALUES (?, ?, ?)
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -668,7 +687,8 @@ public class Database {
                 
                 return userId;
             }
-
+            
+            
             return null;
         }
 
@@ -680,16 +700,16 @@ public class Database {
 
     /* Reviews */
     public List<Review> getHotelReviews(int hotelId) {
-        try {
+        String sql = """
+            SELECT * FROM
+                reviews AS r
+                WHERE
+                    r.hotel_id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    reviews AS r
-                    WHERE
-                        r.hotel_id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -709,7 +729,8 @@ public class Database {
 
                 reviewList.add(new Review(user, hotel, rating, comment, createdAt));
             }
-
+            
+            
             return reviewList;
         }
 
@@ -724,16 +745,16 @@ public class Database {
     }
 
     public List<Review> getUserReviews(int userId) {
-        try {
+        String sql = """
+            SELECT * FROM
+                reviews AS r
+                WHERE
+                    r.user_id = ?
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                SELECT * FROM
-                    reviews AS r
-                    WHERE
-                        r.user_id = ?
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -753,7 +774,8 @@ public class Database {
 
                 reviewList.add(new Review(user, hotel, rating, comment, createdAt));
             }
-
+            
+            
             return reviewList;
         }
 
@@ -768,14 +790,14 @@ public class Database {
     }
 
     public void createReview(Review review) {
-        try {
+        String sql = """
+            INSERT INTO reviews (user_id, hotel_id, rating, content, date)
+            VALUES (?, ?, ?, ?, ?)
+            """;
+        try(Connection conn = DriverManager.getConnection(dbUrl);
+         PreparedStatement stmt = conn.prepareStatement(sql)){
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection(dbUrl);
 
-            String sql = """
-                INSERT INTO reviews (user_id, hotel_id, rating, content, date)
-                VALUES (?, ?, ?, ?, ?)
-                """;
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -786,10 +808,86 @@ public class Database {
             pstmt.setString(5, review.getCreatedAt().toString());
 
             pstmt.executeUpdate();
+                        
+            
         }
 
         catch (Exception e) {
             System.err.println(e);
         }
     }
+
+    /* Async callers for UI use */
+
+    /*public void searchHotels(SearchParameters params, Consumer<List<Hotel>> onSuccess, Consumer<Exception> onError) {
+        Task<List<Hotel>> task = new Task<>() {
+            @Override
+            protected List<Hotel> call() throws Exception {
+                return searchHotels(params);
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
+        
+        new Thread(task).start();
+    }
+
+    public void getPriceRange(Consumer<List<Integer>> onSuccess, Consumer<Exception> onError) {
+        Task<List<Integer>> task = new Task<>() {
+            @Override
+            protected List<Integer> call() throws Exception {
+                return getPriceRangeAsync();
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
+        
+        new Thread(task).start();
+    }
+
+    public void getLocations(Consumer<List<String>> onSuccess, Consumer<Exception> onError) {
+        Task<List<String>> task = new Task<>() {
+            @Override
+            protected List<String> call() throws Exception {
+                return getLocations();
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
+        
+        new Thread(task).start();
+    }
+
+    public void getRoomTypes(Consumer<List<String>> onSuccess, Consumer<Exception> onError) {
+        Task<List<String>> task = new Task<>() {
+            @Override
+            protected List<String> call() throws Exception {
+                return getRoomTypes();
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
+        
+        new Thread(task).start();
+    }
+
+    public void getUserDetailsAsync(String email, Consumer<User> onSuccess, Consumer<Exception> onError) {
+        Task<User> task = new Task<>() {
+            @Override
+            protected User call() throws Exception {
+                return getUserDetails(email);
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
+        
+        new Thread(task).start();
+    }
+    */
+
 }
