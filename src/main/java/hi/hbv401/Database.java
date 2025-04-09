@@ -564,12 +564,11 @@ public class Database {
             pstmt.setInt(2, roomNumber);
             pstmt.setInt(3, user.getUserId());
 
-            pstmt.executeQuery();
-                        
-            
+            pstmt.executeUpdate();
         }
 
         catch(Exception e) {
+            System.err.println(e);
             System.err.println("Failed to delete booking");
         }
     }

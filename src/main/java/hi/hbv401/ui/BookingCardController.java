@@ -62,6 +62,7 @@ public class BookingCardController {
 
     @FXML
     public void handleCancel() {
+        System.out.println("Deleting booking \n" + booking);
         db.cancelBooking(user, booking.getHotelId(), booking.getRoomNumber());
     }
 }
