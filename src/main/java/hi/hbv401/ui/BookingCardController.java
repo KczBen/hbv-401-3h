@@ -25,6 +25,8 @@ public class BookingCardController {
     @FXML private Label cancelPolicy;
     @FXML private Button cancelButton;
 
+    private UserPageController parentController;
+
     private Database db = Database.getInstance();
     private Booking booking = null;
 
@@ -54,9 +56,14 @@ public class BookingCardController {
         }
     }
 
+    public void setParentController(UserPageController parent) {
+        this.parentController = parent;
+    }
+
     @FXML
     public void handleCancel() {
         System.out.println("Deleting booking \n" + booking);
         db.cancelBooking(booking);
+        parentController.init();
     }
 }
