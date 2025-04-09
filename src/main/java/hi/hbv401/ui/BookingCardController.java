@@ -9,7 +9,6 @@ import java.util.List;
 import hi.hbv401.Booking;
 import hi.hbv401.Database;
 import hi.hbv401.Hotel;
-import hi.hbv401.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,8 +25,9 @@ public class BookingCardController {
     @FXML private Label cancelPolicy;
     @FXML private Button cancelButton;
 
+    private UserPageController parentController;
+
     private Database db = Database.getInstance();
-    private User user = null;
     private Booking booking = null;
 
     public void setBooking(Booking booking) {
@@ -56,12 +56,14 @@ public class BookingCardController {
         }
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setParentController(UserPageController parent) {
+        this.parentController = parent;
     }
 
     @FXML
     public void handleCancel() {
-        db.cancelBooking(user, booking.getHotelId(), booking.getRoomNumber());
+        System.out.println("Deleting booking \n" + booking);
+        db.cancelBooking(booking);
+        parentController.init();
     }
 }

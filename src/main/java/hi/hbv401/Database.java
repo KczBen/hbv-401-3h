@@ -542,7 +542,7 @@ public class Database {
         }
     }
 
-    public void cancelBooking(User user, int hotelId, int roomNumber) {
+    public void cancelBooking(Booking booking) {
         String sql = """
             DELETE FROM
                 bookings AS b
@@ -550,6 +550,10 @@ public class Database {
                     b.hotel_id = ?
                     AND
                     b.room_number = ?
+                    AND
+                    b.booked_from = ?
+                    AND
+                    b.booked_until = ?
                     AND
                     b.user_id = ?
             """;
@@ -560,16 +564,17 @@ public class Database {
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
-            pstmt.setInt(1, hotelId);
-            pstmt.setInt(2, roomNumber);
-            pstmt.setInt(3, user.getUserId());
+            pstmt.setInt(1, booking.getHotelId());
+            pstmt.setInt(2, booking.getRoomNumber());
+            pstmt.setString(3, booking.getBookedFrom().toString());
+            pstmt.setString(4, booking.getBookedUntil().toString());
+            pstmt.setInt(5, booking.getUser());
 
-            pstmt.executeQuery();
-                        
-            
+            pstmt.executeUpdate();
         }
 
         catch(Exception e) {
+            System.err.println(e);
             System.err.println("Failed to delete booking");
         }
     }

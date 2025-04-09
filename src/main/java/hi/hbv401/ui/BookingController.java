@@ -79,6 +79,19 @@ public class BookingController {
         if (valid) {
             Booking newBooking = new Booking(booking.getBookedFrom(), booking.getBookedUntil(), user.getUserId(), booking.getHotelId(), booking.getRoomNumber());
             db.makeBooking(newBooking);
+
+            // Take them to the success page
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BookingSuccess.fxml"));
+                Parent root = loader.load();
+                
+                Stage stage = (Stage) confirmButton.getScene().getWindow();
+
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
