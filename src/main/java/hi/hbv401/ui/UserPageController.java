@@ -36,7 +36,6 @@ public class UserPageController {
 
                 BookingCardController controller = loader.getController();
                 controller.setBooking(booking);
-                controller.setUser(user);
 
                 bookingListContainer.getChildren().add(hotelCard);
             } catch (IOException e) {
