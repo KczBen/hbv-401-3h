@@ -20,6 +20,8 @@ After that, show that the options work. *The Demoman* as the demo hotel is calle
 You can also select a different location.
 
 ### Booking
+Search for a Guesthouse between April 10 and April 15. Set the end date first, the UI is wonky.
+
 Now you have The Demoman. Click on the Rooms and click Book.
 
 You'll now be prompted to enter an email address. The **format is actually validated**. example@example.com will work. Remember what email you used here, you'll need it later.
