@@ -1,15 +1,15 @@
 package hi.hbv401;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Booking {
-    private final LocalDate bookedFrom;
-    private final LocalDate bookedUntil;
+    private final LocalDateTime bookedFrom;
+    private final LocalDateTime bookedUntil;
     private final User user;
     private final int hotelId;
     private final int roomNumber;
 
-    public Booking(LocalDate bookedFrom, LocalDate bookedUntil, User user, int hotelId, int roomNumber) {
+    public Booking(LocalDateTime bookedFrom, LocalDateTime bookedUntil, User user, int hotelId, int roomNumber) {
         this.bookedFrom = bookedFrom;
         this.bookedUntil = bookedUntil;
         this.user = user;
@@ -17,11 +17,11 @@ public class Booking {
         this.roomNumber = roomNumber;
     }
 
-    public LocalDate getBookedFrom() {
+    public LocalDateTime getBookedFrom() {
         return bookedFrom;
     }
 
-    public LocalDate getBookedUntil() {
+    public LocalDateTime getBookedUntil() {
         return bookedUntil;
     }
 

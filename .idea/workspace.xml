@@ -5,14 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72267759-8dac-4f92-aa4a-ca2c14950385" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UML/UserStories.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/UML/UserStories.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/ui/placeholder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/MainView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/MainView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fxml/MainView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fxml/MainView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel.iml" beforeDir="false" afterPath="$PROJECT_DIR$/hotel.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/Availability.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hi/hbv401/Availability.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/Booking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hi/hbv401/Booking.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hi/hbv401/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hi/hbv401/Database.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/Availability.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/Availability.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/Database.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/Database.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/SearchParameters.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/SearchParameters.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hi/hbv401/Hotel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hi/hbv401/Hotel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-cli/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/site-webapp/WEB-INF/web.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +39,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/main/java/hi/hbv401/ui/MainViewController.java" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -63,8 +71,8 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;temurin-21&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/benja/OneDrive/Desktop/throbohop/hbv-401-3h&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonat/Desktop/haskoli/Vor 2025/HBV401G - Þróun hugbúnaðar/hbv-401-3h&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;Template Data Languages&quot;
@@ -80,10 +88,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
-    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <method v="2">
@@ -97,8 +101,38 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="72267759-8dac-4f92-aa4a-ca2c14950385" name="Changes" comment="" />
+      <created>1743343142432</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743343142432</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>

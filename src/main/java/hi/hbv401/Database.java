@@ -194,7 +194,7 @@ public class Database {
                 // TODO: Remove property type from hotel, it's a room property
             }
 
-            return new Hotel(hotelId, name, rating, longDescription, photos, price, roomsList, propertyType, cancelPolicy, phone, email, address);
+            return new Hotel(hotelId, name, rating, longDescription, photos, price, roomsList, cancelPolicy, phone, email, address);
         }
 
         catch (Exception e) {
