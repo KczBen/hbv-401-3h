@@ -30,6 +30,8 @@ public class HotelCardController {
     @FXML private TitledPane roomPane;
     @FXML private VBox roomList;
     @FXML private ImageView indexPhoto;
+    @FXML private Label cancelPolicy;
+    @FXML private Label address;
 
     private LocalDate bookFrom;
     private LocalDate bookUntil;
@@ -47,6 +49,8 @@ public class HotelCardController {
         rating.setText("Rating: " + hotel.getRating());
         description.setText(hotel.getDescription());
         startingPrice.setText("Starting at " + hotel.getStartingPrice());
+        cancelPolicy.setText(hotel.getCancelPolicy());
+        address.setText(hotel.getAddress());
         String imagePath = System.getProperty("user.dir") + "/csv" + hotel.getPhotos().get(0);
         try {
             File file = new File(imagePath);
@@ -60,8 +64,10 @@ public class HotelCardController {
         }
 
         for (Room room : hotel.getRooms()) {
+            VBox detailsBox = new VBox(3);
             HBox roomBox = new HBox(10);
             Label roomInfo = new Label(room.getType() + " - $" + room.getPrice() + " - Max " + room.getMaxGuests() + " guests");
+            Label amenities = new Label("Includes " + room.getAmenities());
             Button bookButton = new Button("Book");
             
             bookButton.setOnAction(e -> {
@@ -84,7 +90,8 @@ public class HotelCardController {
             });
 
             roomBox.getChildren().addAll(roomInfo, bookButton);
-            roomList.getChildren().add(roomBox);
+            detailsBox.getChildren().addAll(roomBox, amenities);
+            roomList.getChildren().add(detailsBox);
         }
     }
 }
