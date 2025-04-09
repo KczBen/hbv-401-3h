@@ -4,10 +4,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import javafx.concurrent.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -816,78 +813,4 @@ public class Database {
             System.err.println(e);
         }
     }
-
-    /* Async callers for UI use */
-
-    /*public void searchHotels(SearchParameters params, Consumer<List<Hotel>> onSuccess, Consumer<Exception> onError) {
-        Task<List<Hotel>> task = new Task<>() {
-            @Override
-            protected List<Hotel> call() throws Exception {
-                return searchHotels(params);
-            }
-        };
-
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
-        
-        new Thread(task).start();
-    }
-
-    public void getPriceRange(Consumer<List<Integer>> onSuccess, Consumer<Exception> onError) {
-        Task<List<Integer>> task = new Task<>() {
-            @Override
-            protected List<Integer> call() throws Exception {
-                return getPriceRangeAsync();
-            }
-        };
-
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
-        
-        new Thread(task).start();
-    }
-
-    public void getLocations(Consumer<List<String>> onSuccess, Consumer<Exception> onError) {
-        Task<List<String>> task = new Task<>() {
-            @Override
-            protected List<String> call() throws Exception {
-                return getLocations();
-            }
-        };
-
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
-        
-        new Thread(task).start();
-    }
-
-    public void getRoomTypes(Consumer<List<String>> onSuccess, Consumer<Exception> onError) {
-        Task<List<String>> task = new Task<>() {
-            @Override
-            protected List<String> call() throws Exception {
-                return getRoomTypes();
-            }
-        };
-
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
-        
-        new Thread(task).start();
-    }
-
-    public void getUserDetailsAsync(String email, Consumer<User> onSuccess, Consumer<Exception> onError) {
-        Task<User> task = new Task<>() {
-            @Override
-            protected User call() throws Exception {
-                return getUserDetails(email);
-            }
-        };
-
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(new Exception(task.getException())));
-        
-        new Thread(task).start();
-    }
-    */
-
 }

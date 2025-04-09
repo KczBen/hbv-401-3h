@@ -3,7 +3,6 @@ package hi.hbv401.ui;
 import java.io.IOException;
 
 import hi.hbv401.Booking;
-import hi.hbv401.Database;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,8 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginController {
-    private Database db = Database.getInstance();
-
     // Did we get here from booking or login?
     private Booking booking;
 
